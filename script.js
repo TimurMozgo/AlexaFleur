@@ -567,27 +567,35 @@ async function finalCheckout() {
     }
 }
 
-// 10. АНИМАЦИЯ ПУЛЬСИРУЮЩЕЙ КНОПКИ (ЧАТ)
+// 9. АНИМАЦИЯ ПОЯВЛЕНИЯ И УДАЛЕНИЯ ПУЛЬСИРОВАННОЙ КНОПКИ (ЧАТ)
 function startChatPulse() {
     const fab = document.querySelector('.floric-fab');
+    const menu = document.querySelector('.contact-menu');
     if (!fab) return;
 
     function toggleFab() {
+        // 1. Показываем кнопку
         fab.classList.add('visible');
+
+        // 2. Через 20 секунд прячем обратно
         setTimeout(() => {
             fab.classList.remove('visible');
-            const menu = document.getElementById('contact-menu');
+            // Если меню было открыто — закрываем его при исчезновении кнопки
             if (menu) menu.style.display = 'none'; 
-        }, 20000);
+        }, 20000); // 20 сек (можешь поставить 30000 для 30 сек)
     }
 
+    // Запускаем первый раз сразу
     toggleFab();
+
+    // Ставим интервал на 1 минуту (60000 мс)
     setInterval(toggleFab, 60000);
 }
 
+// Запускаем функцию
 document.addEventListener('DOMContentLoaded', startChatPulse);
 
-// 11. ВСПОМОГАТЕЛЬНОЕ
+// 10. ВСПОМОГАТЕЛЬНОЕ
 function toggleWishlist(productId, btnElement) {
     let favorites = JSON.parse(localStorage.getItem('wishlist')) || [];
     if (favorites.includes(productId)) {
@@ -619,3 +627,98 @@ window.addEventListener('click', function(e) {
 });
 
 window.onload = loadStore;
+
+function openAIChat() {
+    document.getElementById('contact-menu').style.display = 'none';
+    document.getElementById('ai-chat-window').style.display = 'flex';
+    
+    const msgContainer = document.getElementById('ai-messages');
+    if (msgContainer.innerHTML.trim() === "") {
+        addMessage("Здраствуйте! Вас приветствует AlexaFleur! Что подберем вам сегодня ?", 'ai');
+    }
+}
+
+function closeAIChat() {
+    document.getElementById('ai-chat-window').style.display = 'none';
+}
+
+function addMessage(text, side) {
+    const container = document.getElementById('ai-messages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `msg-${side}`;
+
+    let formattedText = text;
+
+    // Регулярка ловит любую голенькую ссылку (начиная с http/https)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = formattedText.match(urlRegex);
+
+    if (urls && side === 'ai') {
+        const imageUrl = urls[0]; // Берем ссылку на картинку
+        
+        // Полностью удаляем саму текстовую ссылку из сообщения
+        formattedText = formattedText.replace(imageUrl, '').trim();
+        
+        // Очищаем от возможных скобок, если бот их случайно оставит
+        formattedText = formattedText.replace(/\[\s*\]/g, '').replace(/\(\s*\)/g, '');
+
+        // Выводим чистый текст, а прямо под ним — сочную картинку
+        msgDiv.innerHTML = `${formattedText}<br><img src="${imageUrl}" style="width:100%; border-radius:10px; margin-top:10px; display:block;">`;
+    } else {
+        // Если ссылок нет (обычный диалог) — выводим как есть
+        msgDiv.innerHTML = formattedText; 
+    }
+    
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+// ФУНКЦИЯ ДЛЯ ПАУЗЫ (чтобы сообщения шли по очереди)
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+async function sendToAI() {
+    const input = document.getElementById('ai-user-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, 'user');
+    input.value = '';
+
+    try {
+        const response = await fetch('https://tiktiok.xyz/webhook/site-chat-fleur', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                message: text,
+                sessionId: tg?.initDataUnsafe?.user?.id || "dev_user" 
+            })
+        });
+        
+        const data = await response.json();
+        const fullOutput = data.output || "";
+
+        if (!fullOutput) {
+            addMessage("Зачекайте хвилину, я особисто перевіряю якість сьогоднішньої поставки для Вас...", 'ai');
+            return;
+        }
+
+        // РАЗРЕЗАЕМ ОТВЕТ ПО МАРКЕРУ
+        const messages = fullOutput.split('---SPLIT---');
+
+        // ВЫВОДИМ КАЖДОЕ СООБЩЕНИЕ С ПАУЗОЙ
+        for (const msg of messages) {
+            const cleanMsg = msg.trim();
+            if (cleanMsg) {
+                await delay(600); // Задержка 0.6 сек для солидности
+                addMessage(cleanMsg, 'ai');
+            }
+        }
+
+    } catch (e) {
+        addMessage("Перепрошую, виникла невелика технічна заминка. Спробуйте, будь ласка, ще раз через мить.", 'ai');
+    }
+}
+
+function handleKeyPress(e) {
+    if (e.key === 'Enter') sendToAI();
+}

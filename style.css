@@ -265,9 +265,18 @@ header {
 
 /* Эффект при наведении */
 .buy-btn:hover {
-    background-color: #D96C94 !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 0 20px rgba(217, 108, 148, 0.4);
+    background-color: #2E7D32 !important; /* Глубокий, насыщенный зеленый */
+    color: #FFFFFF !important;            /* Белый текст, чтобы читалось идеально */
+    border-color: #2E7D32 !important;     /* Если у кнопки есть рамка — красим в цвет */
+    
+    /* Сочная, объемная зеленая тень (эффект неонового свечения кнопки) */
+    box-shadow: 0 0 25px rgba(46, 125, 50, 0.6); 
+    
+    /* Добавляем легкое масштабирование, чтобы кнопка "оживала" при наведении */
+    transform: scale(1.03); 
+    
+    /* Плавный переход для всех эффектов */
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* САБЕР (Блик) */
@@ -942,6 +951,143 @@ header {
 .contact-link:hover {
     background: rgba(242, 142, 179, 0.15);
     color: #D96C94;
+}
+
+/* Личный чат с АИ АССИСТЕНТОМ */
+
+.ai-chat-window {
+    position: fixed;
+    /* Center the window */
+    top: 50%;
+    left: 50%;
+    /* Shift back by half its own width and height */
+    transform: translate(-50%, -50%);
+    
+    /* Set width for mobiles (90% width with nice side margins) */
+    width: 90vw;
+    max-width: 400px; /* Won't exceed 400px on computers */
+    height: 75vh;
+    max-height: 600px;
+
+    /* REPAINTED: Main background is now white like the marble */
+    background: #FFFFFF;
+    /* REPAINTED: Border is now elegant rose pink */
+    border: 2px solid #E07A9E;
+    border-radius: 20px;
+    z-index: 100000;
+    display: none; 
+    flex-direction: column;
+    box-shadow: 0 0 50px rgba(0,0,0,0.1); /* Lighter shadow for white theme */
+    overflow: hidden;
+}
+
+.ai-chat-header {
+    /* REPAINTED: Header background is elegant rose pink */
+    background: #E07A9E;
+    /* REPAINTED: Header text is white for contrast */
+    color: #FFFFFF;
+    padding: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.ai-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    background: #ffd4d4;
+}
+
+.msg-ai, .msg-user {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.msg-ai {
+    align-self: flex-start;
+
+    background: #F8F0F3;
+
+    color: #444444;
+
+    border-left: 3px solid #E07A9E;
+}
+
+.msg-user {
+    align-self: flex-end;
+    background: #E07A9E;
+    color: #FFFFFF;
+}
+
+/* ОБЩАЯ ЗОНА ВВОДА */
+.ai-input-area {
+    display: flex;
+    align-items: center; /* Центрируем инпут и кнопку по вертикали */
+    gap: 10px; /* Делаем аккуратный отступ между полем ввода и кнопкой */
+    padding: 12px 15px;
+    background: #FFFFFF;
+    border-top: 1px solid #F1E5E9;
+}
+
+/* КРАСИВОЕ ПОЛЕ ВВОДА */
+.ai-input-area input {
+    flex-grow: 1;
+    background: #FAFAFA; /* Слегка сероватый фон, чтобы выделялся на белом */
+    border: 1px solid #E8D5DC; /* Мягкая розовато-серая рамка */
+    color: #333333;
+    padding: 10px 14px;
+    border-radius: 25px; /* Закругляем края, как в современных мессенджерах */
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease; /* Плавная анимация при клике */
+}
+
+/* Эффект при клике на поле ввода */
+.ai-input-area input:focus {
+    background: #FFFFFF;
+    border-color: #E07A9E; /* Рамка становится фирменной розовой */
+    box-shadow: 0 0 8px rgba(224, 122, 158, 0.2); /* Мягкое неоновое свечение */
+}
+
+/* СТИЛЬНАЯ КРУГЛАЯ КНОПКА ОТПРАВКИ */
+.ai-input-area button {
+    background: #E07A9E; /* Наш фирменный пудрово-розовый цвет */
+    color: #FFFFFF; /* Белая стрелочка */
+    border: none;
+    width: 38px;
+    height: 38px;
+    min-width: 38px; /* Чтобы кнопка не сжималась */
+    border-radius: 50%; /* Делаем её строго круглой */
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(224, 122, 158, 0.3); /* Легкая объемная тень */
+}
+
+/* Эффект при нажатии на кнопку */
+.ai-input-area button:active {
+    transform: scale(0.92); /* Кнопка слегка вдавливается при тапе */
+    background: #C96487; /* Становится чуть темнее при клике */
+    box-shadow: 0 1px 5px rgba(224, 122, 158, 0.2);
+}
+
+@media screen and (max-height: 500px) {
+    .ai-chat-window {
+        height: 95vh;
+        top: 50%;
+    }
 }
 
 /* ОКНО УСПЕХА */
