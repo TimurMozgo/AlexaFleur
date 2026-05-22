@@ -9,23 +9,47 @@
 </head>
 <body>
 
-    <header>
-        <div class="logo">AlexaFleur</div>
+    <header style="flex-direction: column; gap: 10px; align-items: stretch;">
+        <div class="header-top" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">AlexaFleur</div>
+            
+            <div class="lang-toggle-wrapper">
+                <button id="btn-ua" class="lang-toggle-btn active" onclick="setLanguage('UA')">UK</button>
+                <button id="btn-ru" class="lang-toggle-btn" onclick="setLanguage('RU')">RU</button>
+            </div>
+        </div>
+
+        <!-- <div class="address-wrapper">
+            <div class="custom-select" id="custom-address-select">
+                <div class="select-trigger" onclick="toggleAddressDropdown()">
+                    📍 <span id="selected-address-text" data-translate="addr_diivska">м. Дніпро, вул. Велика Діївська 111к (біля метро)</span>
+                    <span class="arrow-icon">▼</span>
+                </div>
+                <div class="select-options" id="address-options">
+                    <div class="option" id="opt-diivska" onclick="selectAddress('Диевская')" data-translate="addr_diivska">
+                        м. Дніпро, вул. Велика Діївська 111к (біля метро)
+                    </div>
+                    <div class="option" id="opt-parusny" onclick="selectAddress('Парусный')" data-translate="addr_parusny">
+                        м. Дніпро, провулок Парусний, 7Д
+                    </div>
+                </div>
+            </div>
+        </div> -->
     </header>
 
     <div class="search-wrapper">
-        <input type="text" id="product-search" placeholder="Пошук квітів..." oninput="handleSearch()">
+        <input type="text" id="product-search" placeholder="Пошук квітів..." data-translate-placeholder="search_placeholder" oninput="handleSearch()">
         <span class="search-icon">🔍</span>
     </div>
 
     <div class="categories-container">
-        <button class="category-btn active" onclick="filterProducts('Все', this)">Всі</button>
-        <button class="category-btn" onclick="filterProducts('Квіти', this)">Квіти</button>
-        <button class="category-btn" onclick="filterProducts('Букети', this)">Букети</button>
-        <button class="category-btn" onclick="filterProducts('Декор', this)">Декор</button>
+        <button class="category-btn active" data-translate="cat_all" onclick="filterProducts('Все', this)">Всі</button>
+        <button class="category-btn" data-translate="cat_flowers" onclick="filterProducts('Квіти', this)">Квіти</button>
+        <button class="category-btn" data-translate="cat_bouquets" onclick="filterProducts('Букети', this)">Букети</button>
+        <button class="category-btn" data-translate="cat_decor" onclick="filterProducts('Декор', this)">Декор</button>
     </div>
 
-    <h1 class="section-title" id="current-category-title">Всі товари</h1>
+    <h1 class="section-title" id="current-category-title" data-translate="all_products_title">Всі товари</h1>
 
     <main>
         <div id="products-container" class="product-grid"></div>
@@ -43,26 +67,26 @@
             <button class="close-cart-btn" onclick="closeCart()">✕</button>
             
             <div class="cart-header">
-                <h2>Кошик</h2>
+                <h2 data-translate="cart_header">Кошик</h2>
             </div>
             
             <div id="cart-stage-1">
                 <div id="cart-items-list" class="cart-items-list"></div>
                 <div class="cart-total-bar">
-                    <b>Разом: </b><span id="cart-total-value">0 ₴</span>
+                    <b data-translate="cart_total">Разом: </b><span id="cart-total-value">0 ₴</span>
                 </div>
-                <button id="checkout-btn" class="checkout-btn" onclick="goToCheckout()">Далі (Оформити)</button>
+                <button id="checkout-btn" class="checkout-btn" data-translate="checkout_btn" onclick="goToCheckout()">Далі (Оформити)</button>
             </div>
 
             <div id="cart-stage-2" style="display: none;">
                 <div class="order-form">
-                    <h3>Деталі доставки:</h3>
-                    <input type="text" id="customer-name" placeholder="Ваше ім'я">
-                    <input type="tel" id="customer-phone" placeholder="Номер телефону">
+                    <h3 data-translate="delivery_details">Деталі доставки:</h3>
+                    <input type="text" id="customer-name" placeholder="Ваше ім'я" data-translate-placeholder="name_placeholder">
+                    <input type="tel" id="customer-phone" placeholder="Номер телефону" data-translate-placeholder="phone_placeholder">
                 </div>
                 <div class="cart-footer-btns">
-                    <button class="back-btn" onclick="backToCart()">Назад</button>
-                    <button class="final-btn" onclick="finalCheckout()">Замовити</button>
+                    <button class="back-btn" data-translate="back_btn" onclick="backToCart()">Назад</button>
+                    <button class="final-btn" data-translate="order_btn" onclick="finalCheckout()">Замовити</button>
                 </div>
             </div>
         </div>
@@ -70,23 +94,22 @@
 
     <div class="floric-fab" onclick="toggleContactMenu()">
         <div class="pulse-ring"></div>
-        <span>ЧАТ</span>
+        <span data-translate="fab_chat">ЧАТ</span>
     </div>
 
     <div id="contact-menu" class="contact-menu">
-        <div onclick="openAIChat()" class="contact-link" style="cursor:pointer;">Чат з флористом</div>
-        <a href="tel:+380730403338" class="contact-link">Зателефонувати</a>
+        <div onclick="openAIChat()" class="contact-link" data-translate="chat_with_florist" style="cursor:pointer;">Чат з флористом</div>
+        <a href="tel:+380673769999" class="contact-link" data-translate="call_btn">Зателефонувати</a>
     </div>
 
     <div id="ai-chat-window" class="ai-chat-window" style="display:none;">
         <div class="ai-chat-header">
-            <span>AlexaFleur| АИ Ассистент</span>
+            <span data-translate="ai_assistant_header">AlexaFleur | АИ Ассистент</span>
             <button onclick="closeAIChat()" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
         </div>
-        <div id="ai-messages" class="ai-messages">
-            </div>
+        <div id="ai-messages" class="ai-messages"></div>
         <div class="ai-input-area">
-            <input type="text" id="ai-user-input" placeholder="Напишіть нам..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="ai-user-input" placeholder="Напишіть нам..." data-translate-placeholder="ai_input_placeholder" onkeypress="handleKeyPress(event)">
             <button onclick="sendToAI()">→</button>
         </div>
     </div>

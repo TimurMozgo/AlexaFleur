@@ -6,23 +6,208 @@ if (tg) {
 }
 
 let totalSum = 0;
+// 1. Словарь переводов интерфейса
+const translations = {
+    UA: {
+        search_placeholder: "Пошук квітів...",
+        cat_all: "Всі",
+        cat_flowers: "Квіти",
+        cat_bouquets: "Букети",
+        cat_decor: "Декор",
+        all_products_title: "Всі товари",
+        cart_header: "Кошик",
+        cart_total: "Разом: ",
+        checkout_btn: "Далі (Оформити)",
+        delivery_details: "Деталі доставки:",
+        name_placeholder: "Ваше ім'я",
+        phone_placeholder: "Номер телефону",
+        back_btn: "Назад",
+        order_btn: "Замовити",
+        fab_chat: "ЧАТ",
+        chat_with_florist: "Чат з флористом",
+        call_btn: "Зателефонувати",
+        ai_assistant_header: "AlexaFleur | АІ Асистент",
+        ai_input_placeholder: "Напишіть нам...",
+        /* ДОП. ФУНКЦИЯ (АДРЕСА):
+        addr_diivska: "м. Дніпро, вул. Велика Діївська 111к (біля метро)",
+        addr_parusny: "м. Дніпро, провулок Парусний, 7Д",
+        welcome_title: "Оберіть магазин для перегляду наявності букетів:"
+        */
+    },
+    RU: {
+        search_placeholder: "Поиск цветов...",
+        cat_all: "Все",
+        cat_flowers: "Цветы",
+        cat_bouquets: "Букеты",
+        cat_decor: "Декор",
+        all_products_title: "Все товары",
+        cart_header: "Корзина",
+        cart_total: "Итого: ",
+        checkout_btn: "Далее (Оформить)",
+        delivery_details: "Детали доставки:",
+        name_placeholder: "Ваше имя",
+        phone_placeholder: "Номер телефона",
+        back_btn: "Назад",
+        order_btn: "Заказать",
+        fab_chat: "ЧАТ",
+        chat_with_florist: "Чат с флористом",
+        call_btn: "Позвонить",
+        ai_assistant_header: "AlexaFleur | AI Ассистент",
+        ai_input_placeholder: "Напишите нам...",
+        /* ДОП. ФУНКЦИЯ (АДРЕСА):
+        addr_diivska: "г. Днепр, ул. Большая Диевская 111к (возле метро)",
+        addr_parusny: "г. Днепр, переулок Парусный, 7Д",
+        welcome_title: "Выберите магазин для просмотра наличия букетов:"
+        */
+    }
+};
 
+// 2. Инициализация языка
+let currentLang = localStorage.getItem('store_lang') || 'UA';
+
+/* ДОП. ФУНКЦИЯ (АДРЕСА):
+let currentAddress = localStorage.getItem('store_address') || null;
+*/
+
+// 3. Функция обновления текстов на странице
+function updateInterface() {
+    // Переводим обычный текст с атрибутом data-translate
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (translations[currentLang][key]) {
+            element.innerHTML = translations[currentLang][key];
+        }
+    });
+
+    // Переводим плейсхолдеры внутри инпутов
+    document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-translate-placeholder');
+        if (translations[currentLang][key]) {
+            element.setAttribute('placeholder', translations[currentLang][key]);
+        }
+    });
+}
+
+// 4. Функция переключения языка для двойного тоггла
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('store_lang', currentLang); // сохраняем выбор
+    
+    updateInterface();
+    
+    // Переключаем активный класс на кнопках переключателя в хэдере
+    document.querySelectorAll('.lang-toggle-btn').forEach(btn => btn.classList.remove('active'));
+    
+    if (currentLang === 'UA') {
+        const btnUa = document.getElementById('btn-ua');
+        if (btnUa) btnUa.classList.add('active');
+    } else {
+        const btnRu = document.getElementById('btn-ru');
+        if (btnRu) btnRu.classList.add('active');
+    }
+
+    if (typeof renderProducts === "function") { renderProducts(); }
+}
+
+/* ==========================================================================
+   ФУНКЦИОНАЛ АДРЕСОВ (ЗАКОММЕНТИРОВАНО / ДОП. ФУНКЦИЯ)
+   ==========================================================================
+
+// 5. Кастомный выпадающий список: Полностью доверяем плавность CSS
+function toggleAddressDropdown() {
+    const selectEl = document.getElementById('custom-address-select');
+    if (!selectEl) return;
+    selectEl.classList.toggle('open'); 
+}
+
+// 6. Функция обработки выбора адреса (и для Welcome-окна, и для хэдера)
+function selectAddress(addressValue) {
+    currentAddress = addressValue;
+    localStorage.setItem('store_address', currentAddress);
+    
+    const triggerText = document.getElementById('selected-address-text');
+    if (triggerText) {
+        triggerText.setAttribute('data-translate', addressValue === 'Диевская' ? 'addr_diivska' : 'addr_parusny');
+        triggerText.innerHTML = translations[currentLang][triggerText.getAttribute('data-translate')];
+    }
+    
+    updateAddressHighlight();
+    
+    const selectEl = document.getElementById('custom-address-select');
+    if (selectEl) {
+        selectEl.classList.remove('open');
+    }
+    
+    if (typeof renderProducts === "function") { renderProducts(); }
+}
+
+// 7. Логика для ПЕРВОГО выбора на стартовом Welcome-экране
+function selectInitialAddress(addressValue) {
+    const welcomeModal = document.getElementById('welcome-modal');
+    if (welcomeModal) welcomeModal.style.display = 'none';
+    selectAddress(addressValue);
+}
+
+// 8. Подсветка выбранного пункта (.selected) в кастомном списке
+function updateAddressHighlight() {
+    const optDiivska = document.getElementById('opt-diivska');
+    const optParusny = document.getElementById('opt-parusny');
+    
+    if (optDiivska) optDiivska.classList.remove('selected');
+    if (optParusny) optParusny.classList.remove('selected');
+    
+    if (currentAddress === 'Диевская' && optDiivska) {
+        optDiivska.classList.add('selected');
+    } else if (currentAddress === 'Парусный' && optParusny) {
+        optParusny.classList.add('selected');
+    }
+}
+
+// 9. Закрытие кастомного селекта, если кликнули в пустую область экрана
+window.addEventListener('click', function(e) {
+    const select = document.getElementById('custom-address-select');
+    if (select && !select.contains(e.target)) {
+        select.classList.remove('open');
+    }
+});
+========================================================================== */
+
+// 10. Запуск при полной загрузке страницы
+document.addEventListener("DOMContentLoaded", () => {
+    updateInterface();
+    
+    // Подсвечиваем сохраненный язык в тоггле хэдера
+    document.querySelectorAll('.lang-toggle-btn').forEach(btn => btn.classList.remove('active'));
+    if (currentLang === 'UA') {
+        const btnUa = document.getElementById('btn-ua');
+        if (btnUa) btnUa.classList.add('active');
+    } else {
+        const btnRu = document.getElementById('btn-ru');
+        if (btnRu) btnRu.classList.add('active');
+    }
+
+    // ТАК КАК АДРЕСА ОТКЛЮЧЕНЫ: Сразу запускаем стандартную витрину без проверок
+    if (typeof renderProducts === "function") { 
+        renderProducts(); 
+    }
+
+    /* ДОП. ФУНКЦИЯ (АДРЕСА) — ОТКЛЮЧЕНО ПРИ СТАРТЕ:
+    if (!currentAddress) {
+        const welcomeModal = document.getElementById('welcome-modal');
+        if (welcomeModal) welcomeModal.style.display = 'flex';
+    } else {
+        const triggerText = document.getElementById('selected-address-text');
+        if (triggerText) {
+            triggerText.setAttribute('data-translate', currentAddress === 'Диевская' ? 'addr_diivska' : 'addr_parusny');
+            triggerText.innerHTML = translations[currentLang][triggerText.getAttribute('data-translate')];
+        }
+        updateAddressHighlight();
+        if (typeof renderProducts === "function") { renderProducts(); }
+    }
+    */
+});
 // Конфиг вебхуков
 const N8N_WEBHOOK_URL = 'https://tiktiok.xyz/webhook/4f86d599-fee4-49a4-8fb6-69fd6738cefe';
-
-// Массив с 10 тестовыми товарами
-const mockProducts = [
-    { "ID": "1", "Название": "Троянда Explorer", "Цена": "120 ₴", "Кол - во": 50, "Категория": "Квіти", "Статус": "active", "Описание": "Класична червона троянда з великим бутоном.", "Фото": "https://images.unsplash.com/photo-1548849170-362584851722?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "2", "Название": "Букет 'Ніжність'", "Цена": "1500 ₴", "Кол - во": 10, "Категория": "Букети", "Статус": "active", "Описание": "Мікс півоній та евкаліпту в крафтовій обгортці.", "Фото": "https://images.unsplash.com/photo-1561100151-64538c98404a?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "3", "Название": "Ваза 'Антик'", "Цена": "850 ₴", "Кол - во": 5, "Категория": "Декор", "Статус": "active", "Описание": "Керамічна ваза ручної роботи для сухоцвітів.", "Фото": "https://images.unsplash.com/photo-1581783898377-1c85bf937427?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "4", "Название": "Біла Лілія", "Цена": "180 ₴", "Кол - во": 25, "Категория": "Квіти", "Статус": "active", "Описание": "Елегантна лілія з тонким ароматом.", "Фото": "https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "5", "Название": "Букет 'Марсель'", "Цена": "2100 ₴", "Кол - во": 3, "Категория": "Букети", "Статус": "active", "Описание": "Авторський букет з гортензіями та трояндами.", "Фото": "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "6", "Название": "Аромасвічка 'Rose'", "Цена": "400 ₴", "Кол - во": 15, "Категория": "Декор", "Статус": "active", "Описание": "Свічка з натурального воску з ароматом саду.", "Фото": "https://images.unsplash.com/photo-1603006905003-be475563bc59?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "7", "Название": "Тюльпан Strong Gold", "Цена": "65 ₴", "Кол - во": 100, "Категория": "Квіти", "Статус": "active", "Описание": "Яскраво-жовтий голландський тюльпан.", "Фото": "https://images.unsplash.com/photo-1520323232435-5882ad34f7ae?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "8", "Название": "Кошик 'Сонце'", "Цена": "3200 ₴", "Кол - во": 2, "Категория": "Букети", "Статус": "active", "Описание": "Велика подарункова корзина з соняшниками.", "Фото": "https://images.unsplash.com/photo-1596003906949-67221c37965c?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "9", "Название": "Подарунковий бокс", "Цена": "1200 ₴", "Кол - во": 7, "Категория": "Декор", "Статус": "active", "Описание": "Набір: листівка, декор та міні-букет.", "Фото": "https://images.unsplash.com/photo-1549462229-4d9ce916327b?q=80&w=400&auto=format&fit=crop" },
-    { "ID": "10", "Название": "Евкаліпт (гілка)", "Цена": "95 ₴", "Кол - во": 40, "Категория": "Квіти", "Статус": "active", "Описание": "Свіжий евкаліпт для доповнення інтер'єру.", "Фото": "https://images.unsplash.com/photo-1545641203-7d072a14e3b9?q=80&w=400&auto=format&fit=crop" }
-];
 
 // 2. ПОИСК ЦВЕТОВ В ПОИСКОВОЙ ЛЕНТЕ
 function handleSearch() {
@@ -40,24 +225,38 @@ function handleSearch() {
 }
 
 // 3. ФУНКЦИЯ ФИЛЬТРАЦИИ КАТЕГОРИЙ
-function filterProducts(category, btn) {
-    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+function filterProducts(category, buttonElement) {
+    // 1. Переключаем активный класс на кнопках (как у тебя и было)
+    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+    buttonElement.classList.add('active');
 
+    // 2. Исправляем тупеж заголовка через наш словарь translations
     const titleElement = document.getElementById('current-category-title');
-    if (titleElement) {
-        titleElement.innerText = category === 'Все' ? 'Всі товари' : category;
+    
+    if (category === 'Все') {
+        titleElement.setAttribute('data-translate', 'all_products_title');
+    } else if (category === 'Квіти') {
+        titleElement.setAttribute('data-translate', 'cat_flowers');
+    } else if (category === 'Букети') {
+        titleElement.setAttribute('data-translate', 'cat_bouquets');
+    } else if (category === 'Декор') {
+        titleElement.setAttribute('data-translate', 'cat_decor');
     }
 
-    if (category === 'Все') {
-        showFiltered(window.allProducts);
-    } else {
-        const filtered = window.allProducts.filter(item => {
-            const itemCat = (item['Категория'] || item['category'] || '').toString().trim();
-            return itemCat === category;
-        });
-        showFiltered(filtered);
-    }
+    // Сразу обновляем текст заголовка под текущий язык магазина
+    const key = titleElement.getAttribute('data-translate');
+    titleElement.innerHTML = translations[currentLang][key];
+
+    // 3. Твоя стандартная фильтрация карточек товаров ниже...
+    // (Тут твой старый код, который сравнивает товары с переменной category)
+    document.querySelectorAll('.product-card').forEach(card => {
+        const productCategory = card.getAttribute('data-category'); // или как там у тебя в коде
+        if (category === 'Все' || productCategory === category) {
+            card.style.style.display = 'block';
+        } else {
+            card.style.style.display = 'none';
+        }
+    });
 }
 
 // 4. ЗАГРУЗКА ДАННЫХ
