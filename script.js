@@ -28,11 +28,11 @@ const translations = {
         call_btn: "Зателефонувати",
         ai_assistant_header: "AlexaFleur | АІ Асистент",
         ai_input_placeholder: "Напишіть нам...",
-        /* ДОП. ФУНКЦИЯ (АДРЕСА):
+        
+        // 🔥 ВОТ ОНИ, РАСКОММЕНТИРОВАННЫЕ АДРЕСА:
         addr_diivska: "м. Дніпро, вул. Велика Діївська 111к (біля метро)",
         addr_parusny: "м. Дніпро, провулок Парусний, 7Д",
         welcome_title: "Оберіть магазин для перегляду наявності букетів:"
-        */
     },
     RU: {
         search_placeholder: "Поиск цветов...",
@@ -54,20 +54,22 @@ const translations = {
         call_btn: "Позвонить",
         ai_assistant_header: "AlexaFleur | AI Ассистент",
         ai_input_placeholder: "Напишите нам...",
-        /* ДОП. ФУНКЦИЯ (АДРЕСА):
+        
+        // 🔥 И ЗДЕСЬ ТОЖЕ УБРАЛИ КОММЕНТАРИИ:
         addr_diivska: "г. Днепр, ул. Большая Диевская 111к (возле метро)",
         addr_parusny: "г. Днепр, переулок Парусный, 7Д",
         welcome_title: "Выберите магазин для просмотра наличия букетов:"
-        */
     }
 };
 
 // 2. Инициализация языка
 let currentLang = localStorage.getItem('store_lang') || 'UA';
 
-/* ДОП. ФУНКЦИЯ (АДРЕСА):
+
 let currentAddress = localStorage.getItem('store_address') || null;
-*/
+
+let currentCategory = 'Все';
+
 
 // 3. Функция обновления текстов на странице
 function updateInterface() {
@@ -106,12 +108,8 @@ function setLanguage(lang) {
         if (btnRu) btnRu.classList.add('active');
     }
 
-    if (typeof renderProducts === "function") { renderProducts(); }
+    if (window.allProducts) { showFiltered(window.allProducts); }
 }
-
-/* ==========================================================================
-   ФУНКЦИОНАЛ АДРЕСОВ (ЗАКОММЕНТИРОВАНО / ДОП. ФУНКЦИЯ)
-   ==========================================================================
 
 // 5. Кастомный выпадающий список: Полностью доверяем плавность CSS
 function toggleAddressDropdown() {
@@ -138,7 +136,10 @@ function selectAddress(addressValue) {
         selectEl.classList.remove('open');
     }
     
-    if (typeof renderProducts === "function") { renderProducts(); }
+    // 🔥 ИСПРАВЛЕНО ЗДЕСЬ: Перерисовываем витрину правильной функцией
+    if (window.allProducts) { 
+        showFiltered(window.allProducts); 
+    }
 }
 
 // 7. Логика для ПЕРВОГО выбора на стартовом Welcome-экране
@@ -170,7 +171,6 @@ window.addEventListener('click', function(e) {
         select.classList.remove('open');
     }
 });
-========================================================================== */
 
 // 10. Запуск при полной загрузке страницы
 document.addEventListener("DOMContentLoaded", () => {
@@ -186,12 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnRu) btnRu.classList.add('active');
     }
 
-    // ТАК КАК АДРЕСА ОТКЛЮЧЕНЫ: Сразу запускаем стандартную витрину без проверок
-    if (typeof renderProducts === "function") { 
-        renderProducts(); 
-    }
-
-    /* ДОП. ФУНКЦИЯ (АДРЕСА) — ОТКЛЮЧЕНО ПРИ СТАРТЕ:
     if (!currentAddress) {
         const welcomeModal = document.getElementById('welcome-modal');
         if (welcomeModal) welcomeModal.style.display = 'flex';
@@ -202,10 +196,12 @@ document.addEventListener("DOMContentLoaded", () => {
             triggerText.innerHTML = translations[currentLang][triggerText.getAttribute('data-translate')];
         }
         updateAddressHighlight();
-        if (typeof renderProducts === "function") { renderProducts(); }
+        
+        // 🔥 ИСПРАВЛЕНО ЗДЕСЬ
+        if (window.allProducts) { showFiltered(window.allProducts); }
     }
-    */
 });
+
 // Конфиг вебхуков
 const N8N_WEBHOOK_URL = 'https://tiktiok.xyz/webhook/4f86d599-fee4-49a4-8fb6-69fd6738cefe';
 
@@ -226,37 +222,29 @@ function handleSearch() {
 
 // 3. ФУНКЦИЯ ФИЛЬТРАЦИИ КАТЕГОРИЙ
 function filterProducts(category, buttonElement) {
-    // 1. Переключаем активный класс на кнопках (как у тебя и было)
+    // 1. Переключаем активный класс на кнопках
     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-    buttonElement.classList.add('active');
+    if (buttonElement) buttonElement.classList.add('active');
 
-    // 2. Исправляем тупеж заголовка через наш словарь translations
+    // 2. Обновляем заголовок через наш словарь translations
     const titleElement = document.getElementById('current-category-title');
-    
-    if (category === 'Все') {
-        titleElement.setAttribute('data-translate', 'all_products_title');
-    } else if (category === 'Квіти') {
-        titleElement.setAttribute('data-translate', 'cat_flowers');
-    } else if (category === 'Букети') {
-        titleElement.setAttribute('data-translate', 'cat_bouquets');
-    } else if (category === 'Декор') {
-        titleElement.setAttribute('data-translate', 'cat_decor');
+    if (titleElement) {
+        if (category === 'Все') titleElement.setAttribute('data-translate', 'all_products_title');
+        else if (category === 'Квіти') titleElement.setAttribute('data-translate', 'cat_flowers');
+        else if (category === 'Букети') titleElement.setAttribute('data-translate', 'cat_bouquets');
+        else if (category === 'Декор') titleElement.setAttribute('data-translate', 'cat_decor');
+
+        const key = titleElement.getAttribute('data-translate');
+        if (translations[currentLang] && translations[currentLang][key]) {
+            titleElement.innerHTML = translations[currentLang][key];
+        }
     }
 
-    // Сразу обновляем текст заголовка под текущий язык магазина
-    const key = titleElement.getAttribute('data-translate');
-    titleElement.innerHTML = translations[currentLang][key];
-
-    // 3. Твоя стандартная фильтрация карточек товаров ниже...
-    // (Тут твой старый код, который сравнивает товары с переменной category)
-    document.querySelectorAll('.product-card').forEach(card => {
-        const productCategory = card.getAttribute('data-category'); // или как там у тебя в коде
-        if (category === 'Все' || productCategory === category) {
-            card.style.style.display = 'block';
-        } else {
-            card.style.style.display = 'none';
-        }
-    });
+    // 3. СОХРАНЯЕМ КАТЕГОРИЮ И ЗАПУСКАЕМ ПЕРЕРИСОВКУ
+    currentCategory = category;
+    if (window.allProducts) {
+        showFiltered(window.allProducts);
+    }
 }
 
 // 4. ЗАГРУЗКА ДАННЫХ
@@ -296,24 +284,49 @@ function showFiltered(items) {
     if (!container) return;
     container.innerHTML = ''; 
 
+    // Берем текущую категорию (если переменной вдруг нет, считаем что выбрано "Все")
+    const activeCategory = typeof currentCategory !== 'undefined' ? currentCategory : 'Все';
+
     items.forEach(item => {
         const title = (item['Название'] || item['name'] || '').toString().trim();
         const rawStatus = (item['Статус'] || item['status'] || '').toString().trim();
+        const itemAddress = (item['Адрес'] || item['address'] || '').toString().trim();
         
+        // НОВОЕ: Получаем категорию букета из таблицы
+        const itemCategory = (item['Категория'] || item['category'] || '').toString().trim();
+        
+        // 1. БАЗОВЫЙ ФИЛЬТР: Проверяем активность товара
         if (!title || rawStatus.toLowerCase() !== 'active') return;
 
+        // 2. АДРЕСНЫЙ ФИЛЬТР: Проверяем совпадение адресов
+        if (typeof currentAddress !== 'undefined' && currentAddress && currentAddress !== 'undefined') {
+            const cleanCurrent = currentAddress.toLowerCase().trim();
+            const cleanItem = itemAddress.toLowerCase().trim();
+            if (!cleanItem.includes(cleanCurrent) && !cleanCurrent.includes(cleanItem)) {
+                return;
+            }
+        } else if (typeof currentAddress !== 'undefined' && currentAddress === 'undefined') {
+            return;
+        }
+
+        // 3. КАТЕГОРИЙНЫЙ ФИЛЬТР (Жесткий фейс-контроль):
+        // Если мы ищем не "Все", и категория товара не совпадает с нажатой кнопкой — пропускаем товар!
+        if (activeCategory !== 'Все' && itemCategory !== activeCategory) {
+            return;
+        }
+
+        // 4. СБОР ДАННЫХ ИЗ ТАБЛИЦЫ
         let rawStock = item['Кол - во'] || item['Кол-во'] || item['Количество'] || 0;
         const stock = parseInt(String(rawStock).replace(/\D/g, '')) || 0;
-
-        const id = item['ID'] || item['id'] || `id-${Math.random().toString(36).substr(2, 9)}`;
+        const id = item['row_number'] || item['rowNumber'] || `row-${Math.random().toString(36).substr(2, 5)}`;
         const price = parseInt(String(item['Цена'] || item['price'] || '0').replace(/\D/g, '')) || 0;
         const img = item['Фото'] || item['photo'] || '';
-        
         const description = (item['Описание'] || item['description'] || 'Преміальний букет для особливих моментів.').toString().trim();
         
         const cleanTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const cleanDesc = description.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\r?\n|\r/g, " ");
 
+        // 5. ОТРИСОВКА КАРТОЧКИ
         container.innerHTML += `
             <div class="product-card" data-id="${id}" data-stock="${stock}">
                 <div class="product-image-container">
@@ -323,9 +336,7 @@ function showFiltered(items) {
                     <h3 class="product-title">${title}</h3>
                     <p class="product-description">${description}</p>
                     <p class="product-price" style="color: #CBA35C; font-weight: bold; margin: 5px 0;">${price} ₴</p>
-                    <p class="product-stock" style="color: #888; font-size: 13px; margin: 8px 0; text-align: center; width: 100%;">
-                        Залишилося: <b style="color:#CBA35C">${stock}</b> шт.
-                    </p>
+                    <p class="product-stock" style="color: #888; font-size: 13px; margin: 8px 0;">Залишилося: <b style="color:#CBA35C">${stock}</b> шт.</p>
                     <button class="details-btn" onclick="openProductDetails('${id}', '${cleanTitle}', '${img}', '${cleanDesc}', ${price})">ДОКЛАДНІШЕ</button>
                     <div class="buy-section" style="margin-top: 10px; width: 100%;">
                         ${stock > 0 ? `
@@ -335,11 +346,7 @@ function showFiltered(items) {
                                 <span class="count-value">1</span>
                                 <button class="count-btn" onclick="changeCount(this, 1)">+</button>
                             </div>
-                        ` : `
-                            <div style="background: #1a1a1a; color: #555; padding: 12px; border-radius: 8px; font-size: 14px; border: 1px solid #333;">
-                                Немає в наявності 🌸
-                            </div>
-                        `}
+                        ` : `<div style="background: #1a1a1a; color: #555; padding: 12px; border-radius: 8px; font-size: 14px; border: 1px solid #333;">Немає в наявності 🌸</div>`}
                     </div>
                 </div>
             </div>`;
@@ -358,19 +365,30 @@ function openProductDetails(id, title, img, desc, price) {
         detailsModal.className = 'cart-overlay';
         document.body.appendChild(detailsModal);
     }
+
+    // Используем конструктор элементов или просто экранируем данные, 
+    // чтобы кавычки не ломали верстку
+    const safeTitle = title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+    
     detailsModal.innerHTML = `
         <div class="cart-container details-container">
             <button class="close-details" onclick="closeDetails()">✕</button>
-            <div class="details-img-wrapper"><img src="${img}" class="product-image"></div>
+            <div class="details-img-wrapper"><img src="${img}" class="product-image" alt="Букет"></div>
             <h2 style="color:#CBA35C; text-transform: uppercase; font-size: 20px;">${title}</h2>
             <p style="color:#888; font-size: 14px; margin: 15px 0;">${desc}</p>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; border-top: 1px solid #222; padding-top: 20px;">
                 <span style="font-size:24px; color:#CBA35C; font-weight:700;">${price} ₴</span>
-                <button class="checkout-btn" style="width:auto; padding: 12px 30px; margin:0;" onclick="addToCartFromDetails('${id}');">Додати</button>
+                <button class="checkout-btn" 
+                        style="width:auto; padding: 12px 30px; margin:0;" 
+                        onclick="addToCartFromDetails('${id}')">
+                    Додати
+                </button>
             </div>
         </div>`;
+
     detailsModal.style.display = 'flex';
-    setTimeout(() => detailsModal.classList.add('active'), 10);
+    // Добавляем микро-задержку для CSS-анимации
+    requestAnimationFrame(() => detailsModal.classList.add('active'));
 }
 
 function closeDetails() {
