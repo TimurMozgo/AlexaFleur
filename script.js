@@ -784,6 +784,103 @@ async function finalCheckout() {
     }
 }
 
+let initGardenData;
+let updateFlowerStage;
+
+document.addEventListener("DOMContentLoaded", () => {
+    
+    const gardenFab = document.getElementById('garden-fab');
+    const gardenModal = document.getElementById('garden-modal');
+    const closeGardenBtn = document.getElementById('close-garden');
+    const shareBtn = document.getElementById('share-btn');
+    
+    const flowerImage = document.getElementById('flower-image');
+    const flowerStageText = document.getElementById('flower-stage');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    
+    // Ссылка теперь хранится просто в памяти скрипта, а не в инпуте
+    let generatedRefLink = ""; 
+
+    if (gardenFab && gardenModal) {
+        gardenFab.addEventListener('click', () => {
+            gardenModal.style.display = 'flex'; 
+            initGardenData(); 
+        });
+    }
+
+    if (closeGardenBtn && gardenModal) {
+        closeGardenBtn.addEventListener('click', () => {
+            gardenModal.style.display = 'none';
+        });
+    }
+
+    if (gardenModal) {
+        gardenModal.addEventListener('click', (event) => {
+            if (event.target === gardenModal) {
+                gardenModal.style.display = 'none';
+            }
+        });
+    }
+
+    initGardenData = function() {
+        const tg = window.Telegram?.WebApp;
+        const userId = tg?.initDataUnsafe?.user?.id || "123456789"; 
+        const botUsername = "AlexaFleurBot"; 
+        
+        // Записываем ссылку в переменную для шеринга
+        generatedRefLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+
+        const testUserScore = 40; 
+        updateFlowerStage(testUserScore);
+    };
+
+    updateFlowerStage = function(score) {
+        const currentScore = parseInt(score) || 0; 
+        const maxScore = 100; 
+        const progressPercent = Math.min((currentScore / maxScore) * 100, 100);
+        
+        if (progressFill) progressFill.style.width = `${progressPercent}%`;
+        if (progressText) progressText.innerText = `${currentScore} / ${maxScore} XP`;
+        
+        const stages = [
+            { min: 0,   max: 25,  name: "ЗЕРНЯТКО", img: "https://images.unsplash.com/photo-1533038590040-e8585526b5e1?auto=format&fit=crop&w=500&q=80" },
+            { min: 26,  max: 50,  name: "ПАРОСТОК", img: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=500&q=80" },
+            { min: 51,  max: 75,  name: "СТЕБЛО",   img: "https://images.unsplash.com/photo-1508556497405-ed7dcd94acfc?auto=format&fit=crop&w=500&q=80" },
+            { min: 76,  max: 100, name: "БУТОН",    img: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=500&q=80" },
+            { min: 101, max: Infinity, name: "РОЗКВІТЛИЙ БУКЕТ!", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80" }
+        ];
+        
+        let currentStageIndex = stages.findIndex(stage => currentScore >= stage.min && currentScore <= stage.max);
+        if (currentStageIndex === -1) currentStageIndex = stages.length - 1;
+        
+        const activeStage = stages[currentStageIndex];
+        if (flowerStageText) flowerStageText.innerText = activeStage.name;
+        
+        if (flowerImage) {
+            flowerImage.style.transform = "scale(0.95)";
+            setTimeout(() => {
+                flowerImage.src = activeStage.img; 
+                flowerImage.style.transform = "scale(1)";
+            }, 100);
+        }
+    };
+
+    // Кнопка "Запросити друга" — использует ссылку из памяти
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальний сад та отримати бонус!");
+            const shareUrl = `https://t.me/share/url?url=${generatedRefLink}&text=${text}`;
+            
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
+            }
+        });
+    }
+});
+
 // 9. АНИМАЦИЯ ПОЯВЛЕНИЯ И УДАЛЕНИЯ ПУЛЬСИРОВАННОЙ КНОПКИ (ЧАТ)
 function startChatPulse() {
     const fab = document.querySelector('.floric-fab');
