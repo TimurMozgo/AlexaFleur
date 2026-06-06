@@ -1004,6 +1004,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- 3. ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА ИЗ N8N ---
+// --- ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА И ПЕРЕДАЧА РЕФЕРАЛА В N8N ---
 async function loadUserBalance() {
     const webapp = window.Telegram?.WebApp;
     if (!webapp) return;
@@ -1011,15 +1012,29 @@ async function loadUserBalance() {
     const user = webapp.initDataUnsafe?.user;
     if (!user) return;
 
+    // Вытаскиваем параметр рефералки (например: "ref_6750749768")
+    const startParam = webapp.initDataUnsafe?.start_param || "";
+    
+    let inviterId = "";
+    // Если параметр есть и он начинается с "ref_", вырезаем оттуда чистый ID пригласившего
+    if (startParam && startParam.startsWith("ref_")) {
+        inviterId = startParam.replace("ref_", "");
+    }
+
     const webhookUrl = 'https://tiktiok.xyz/webhook-test/getusersbalanse'; 
 
+    // Формируем URL. Теперь мы ВСЕГДА отправляем в n8n параметр inviter_id
+    // Если зашли без рефки, он будет просто пустым
+    const finalUrl = `${webhookUrl}?telegram_id=${user.id}&inviter_id=${inviterId}`;
+
     try {
-        const response = await fetch(`${webhookUrl}?telegram_id=${user.id}`);
+        const response = await fetch(finalUrl);
         if (response.ok) {
             const data = await response.json();
             
             if (data && data.balance !== undefined) {
                 const realBalance = data.balance;
+                
                 updateBalanceUI(realBalance);
                 updateFlowerStage(realBalance);
             }
