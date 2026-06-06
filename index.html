@@ -95,32 +95,99 @@
 <!-- НАЧАЛО ИГРЫ -->
 
     <!-- FAB -->
+
     <div id="garden-fab" class="garden-fab">
         <span>🌱</span>
         <small>САД</small>
     </div>
 
-    <!-- MODAL -->
-    
     <div id="garden-modal" class="garden-overlay">
-        <div class="garden-modal">
+        <div class="garden-modal animate-fade-in">
             <button id="close-garden" class="close-btn">✕</button>
-            <h2>A L E X A F L E U R</h2>
             
-            <div class="flower-box">
-                <div class="flower-glow"></div>
-                <img id="flower-image" src="https://images.unsplash.com/photo-1533038590040-e8585526b5e1?auto=format&fit=crop&w=500&q=80">
-                <div id="flower-stage">ЗЕРНЯТКО</div>
-            </div>
-            
-            <div class="progress-box">
-                <div class="progress-bg">
-                    <div id="progress-fill" class="progress-fill"></div>
-                </div>
-                <p id="progress-text">0 / 100 XP</p>
+            <header class="modal-header">
+                <div class="brand-logo">🌷</div>
+                <h2>ALEXAFLEUR</h2>
+                <div class="system-status">● СТАТУС СТАБІЛЬНО</div>
+            </header>
+
+            <div class="incubator-tabs">
+                <button id="tab-capsule-1" class="tab-btn active-cyan">ИНКУБАТОР 01</button>
+                <button id="tab-capsule-2" class="tab-btn">ИНКУБАТОР 02</button>
             </div>
 
-            <button id="share-btn" class="share-btn">Запросити друга</button>
+            <div class="incubator-container">
+                
+                <div class="stats-panel side-panel-left">
+                    <div class="stat-indicator">
+                        <span class="stat-label">STAGE</span>
+                        <span id="flower-stage" class="stat-value highlight-cyan">01</span>
+                    </div>
+                    <div class="stat-indicator border-top">
+                        <span class="stat-label">СТАДІЯ</span>
+                        <span id="flower-stage-name" class="stat-value text-muted">СЕМЯ</span>
+                    </div>
+                    <div class="stat-indicator border-top">
+                        <span class="stat-label">ПОТЕНЦІАЛ</span>
+                        <span class="stat-value highlight-gold">100%</span>
+                    </div>
+                </div>
+
+                <div class="incubator-zone">
+                    
+                    <div id="capsule-1" class="flower-box incubator-capsule active-capsule">
+                        <div class="neon-flicker-glow"></div>
+                        <img class="capsule-bg" src="./img/Incubator-removebg-preview.png" alt="Incubator">
+                        <div class="levitating-seed-wrapper">
+                            <img id="flower-image" src="./img/clone.png" alt="Seed">
+                        </div>
+                    </div>
+
+                    <div id="capsule-2" class="flower-box incubator-capsule">
+                        <div class="neon-flicker-glow-purple"></div>
+                        <img class="capsule-bg" src="./img/Incubator_two.png" alt="Incubator">
+                        
+                        <div class="levitating-seed-wrapper">
+                            <div id="capsule-locked-icon" class="locked-question-mark">?</div>
+                            
+                            <img id="flower-image-purple" src="./img/clone.png" alt="Purple Seed" style="display: none;">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="stats-panel side-panel-right">
+                    <div class="stat-indicator">
+                        <span class="stat-label">СЕРЕДОВИЩЕ</span>
+                        <span class="stat-value text-success">ОПТИМАЛЬНЕ</span>
+                    </div>
+                    <div class="stat-indicator border-top">
+                        <span class="stat-label">ТЕМПЕРАТУРА</span>
+                        <span class="stat-value">22.5 °C</span>
+                    </div>
+                    <div class="stat-indicator border-top">
+                        <span class="stat-label">ВОЛОГІСТЬ</span>
+                        <span class="stat-value">60%</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="modal-footer">
+                <div class="progress-box">
+                    <div class="progress-header">
+                        <span>Рівень росту</span>
+                        <span id="progress-text">0 / 100 XP</span>
+                    </div>
+                    <div class="progress-bg">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <button id="share-btn" class="share-btn-neon">
+                    <span class="btn-icon"></span> Запросити друга (+10 XP)
+                </button>
+            </footer>
         </div>
     </div>
 

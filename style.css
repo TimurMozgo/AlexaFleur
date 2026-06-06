@@ -981,10 +981,10 @@ header {
 }
 
 /* ==========================================================================
-   КОМНАТА САДОВНИКА: CSS (СТРОГО ПО ТВОЕЙ СТРУКТУРЕ)
+   КОМНАТА САДОВНИКА: CSS (В СТИЛЕ WEB3 / ALEXAFLEUR LAB)
    ========================================================================== */
 
-/* 1. Плавающая кнопка (левый нижний угол) */
+/* 1. Плавающая кнопка (САД) — делаем чуть более "неоновой" */
 .garden-fab {
     position: fixed;
     bottom: 20px;
@@ -992,19 +992,20 @@ header {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4);
+    background: linear-gradient(135deg, #00f3ff, #0088ff);
+    box-shadow: 0 4px 20px rgba(0, 243, 255, 0.4);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 999; /* Выше товаров, чата и фильтров */
-    transition: transform 0.2s ease;
+    z-index: 999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .garden-fab:active {
     transform: scale(0.9);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
 }
 
 .garden-fab span {
@@ -1020,6 +1021,10 @@ header {
     letter-spacing: 0.5px;
 }
 
+/* ==========================================================================
+   БАЗОВЫЙ CSS МОДАЛКИ (ТВОЙ ОРИГИНАЛЬНЫЙ КОД БЕЗ ИЗМЕНЕНИЙ РАЗМЕРОВ)
+   ========================================================================== */
+
 /* 2. Темный оверлей (задний фон модалки) */
 .garden-overlay {
     position: fixed;
@@ -1027,211 +1032,553 @@ header {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 99999; /* Абсолютный топ, поверх всего */
-    display: none; /* JS переключит на flex при клике */
+    background: rgba(5, 7, 10, 0.85); /* Максимально темный космос */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 99999;
+    display: none; /* JS переключит на flex */
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 10px;
     box-sizing: border-box;
 }
 
-/* 3. Модальное окно — делаем чуть шире и добавляем свободного места сверху */
+/* 3. Главная Модалка — стиль стеклянной панели */
 .garden-modal {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(180deg, rgba(20, 25, 35, 0.8) 0%, rgba(10, 12, 18, 0.95) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.2); /* Золотая окантовка */
     border-radius: 24px;
     width: 100%;
-    max-width: 380px; /* Увеличили ширину карточки с 350px до 380px */
-    padding: 40px 20px 24px 20px; /* Сверху сделали 40px, чтобы заголовок опустился ниже крестика */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    padding: 30px 15px 25px 15px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.05);
     color: #fff;
     text-align: center;
     box-sizing: border-box;
     position: relative;
-    animation: gardenSlideUp 0.3s cubic-bezier(0.1, 0.8, 0.3, 1);
+    animation: gardenSlideUp 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
 }
 
-/* Кнопка закрытия ✕ — сажаем четко ВНУТРЬ карточки, в верхний правый угол */
+/* Кнопка закрытия ✕ */
 .close-btn {
     position: absolute;
-    top: 15px;       /* Отступ внутрь от верхнего края */
-    right: 15px;     /* Отступ внутрь от правого края */
-    background: rgba(255, 255, 255, 0.15);
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    width: 30px;     
-    height: 30px;
+    color: rgba(255, 255, 255, 0.5);
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100000;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.2s;
 }
 
 .close-btn:active {
     background: #e74c3c;
     color: #fff;
+    border-color: #e74c3c;
 }
 
-.garden-modal h2 {
-    font-size: 25px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    background: linear-gradient(135deg, #FFE07D 0%, #F1C40F 50%, #B7950B 100%);
+/* 4. Хедер: Логотип и Название */
+.modal-header {
+    background: transparent !important; 
+    background-color: transparent !important; 
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 10px 0;
+}
+
+.brand-logo {
+    font-size: 24px;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6)); /* Золотое свечение */
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #FFE07D 0%, #D4AF37 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: inline-block;
+    margin: 0 0 10px 0;
     text-transform: uppercase;
-    margin-bottom: 30px;
-    margin-top: 30px;
 }
 
+.system-status {
+    font-size: 9px;
+    color: #00f3ff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+}
+
+/* 5. Контейнер лаборатории (Флекс для ТМА) */
+.incubator-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 10px;
+}
+
+/* 1. Контейнер капсулы */
+.incubator-capsule {
+    position: relative;
+    width: 42%; 
+    height: 240px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+/* 2. Масштаб самой колбы */
+.capsule-bg {
+    position: absolute;
+    top: 50%;
+    left: 65%; /* Сместили на 2% вправо. Если мало — поставь 53% или 54% */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 2;
+    pointer-events: none;
+    margin-top: 15px;
+    
+    /* Сохраняем центровку и масштаб */
+    transform: translate(-50%, -50%) scale(1.65); 
+    transform-origin: center center;
+}
+
+.levitating-seed-wrapper {
+    position: relative;
+    z-index: 3;
+    width: 65px;
+    height: 65px;
+    left: 16%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: floatAnimation 3s ease-in-out infinite;
+    margin-top: -5px; 
+}
+
+.levitating-seed-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.8)) drop-shadow(0 0 25px rgba(0, 150, 255, 0.4));
+}
+
+/* ТВОЕ ГЛАВНОЕ ЗЕРНО (РАЗМЕРЫ И МАСШТАБ СТРОГО СОХРАНЕНЫ) */
+#flower-image {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    transform: scale(1.8);
+    transform-origin: center center;
+    filter: 
+        drop-shadow(0 0 15px rgba(0, 229, 255, 0.95)) 
+        drop-shadow(0 0 40px rgba(165, 0, 255, 0.8)) 
+        drop-shadow(0 0 75px rgba(0, 50, 255, 0.6));
+    animation: cosmicGlowPulse 4s ease-in-out infinite alternate;
+    transition: transform 0.3s ease;
+
+    /* ЖЕСТКИЙ ФИКС: клики проходят сквозь картинку к табам */
+    pointer-events: none; 
+}
+
+/* --- АНИМАЦИЯ ДЫХАНИЯ КОСМИЧЕСКОГО СВЕЧЕНИЯ --- */
+@keyframes cosmicGlowPulse {
+    0% {
+        filter: 
+            drop-shadow(0 0 10px rgba(0, 229, 255, 0.8))
+            drop-shadow(0 0 30px rgba(165, 0, 255, 0.6))
+            drop-shadow(0 0 60px rgba(0, 50, 255, 0.4));
+    }
+    50% {
+        filter: 
+            drop-shadow(0 0 25px rgba(0, 229, 255, 1))
+            drop-shadow(0 0 55px rgba(165, 0, 255, 0.9))
+            drop-shadow(0 0 95px rgba(0, 50, 255, 0.8));
+    }
+    100% {
+        filter: 
+            drop-shadow(0 0 18px rgba(0, 229, 255, 0.9))
+            drop-shadow(0 0 45px rgba(165, 0, 255, 0.7))
+            drop-shadow(0 0 80px rgba(0, 50, 255, 0.5));
+    }
+}
+
+.neon-flicker-glow {
+    position: absolute;
+    top: 15%;
+    width: 60%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 150, 255, 0.05) 50%, rgba(0, 0, 0, 0) 70%);
+    z-index: 1;
+    border-radius: 50%;
+    animation: neonFlicker 4s linear infinite;
+}
+
+/* --- АНИМАЦИИ ЛЕВИТАЦИИ И МЕРЦАНИЯ --- */
+@keyframes floatAnimation {
+    0% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-10px) scale(1.03); }
+    100% { transform: translateY(0px) scale(1); }
+}
+
+@keyframes neonFlicker {
+    0%, 100% { opacity: 0.8; }
+    41% { opacity: 0.8; }
+    42% { opacity: 0.5; }
+    43% { opacity: 0.8; }
+    45% { opacity: 0.3; }
+    46% { opacity: 0.9; }
+    70% { opacity: 0.9; }
+    71% { opacity: 0.6; }
+    72% { opacity: 0.9; }
+}
+
+/* Боковые панели со статистикой */
+.stats-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    width: 80px;
+}
+
+.side-panel-right {
+    text-align: right;
+}
+
+.stat-indicator {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.border-top {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.stat-label {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.highlight-cyan { color: #00f3ff; text-shadow: 0 0 5px rgba(0, 243, 255, 0.5); font-size: 16px; }
+.highlight-gold { color: #FFD700; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+.text-muted { color: #a6acaf; }
+.text-success { color: #2ecc71; }
+
+
 /* ==========================================================================
-   ОБНОВЛЕННЫЙ БЛОК ЦВЕТКА (МАКСИМАЛЬНЫЙ РАЗМЕР)
+   ДОПОЛНИТЕЛЬНЫЕ НОВЫЕ СТИЛИ (ДЛЯ ТАБОВ И ВТОРОЙ КАПСУЛЫ)
    ========================================================================== */
 
-.flower-box {
+/* Переключатели инкубаторов (Табы) */
+.incubator-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    width: 100%;
+
     position: relative;
-    width: 240px;        
-    height: 240px;      
-    margin: 0 auto 25px auto; 
+    z-index: 999; 
+}
+.tab-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 16px;
+    border-radius: 20px;
+    color: #666;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active-cyan {
+    color: #00e5ff;
+    border-color: #00e5ff;
+    background: rgba(0, 229, 255, 0.07);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+}
+
+.tab-btn.active-purple {
+    color: #b100ff;
+    border-color: #b100ff;
+    background: rgba(177, 0, 255, 0.07);
+    box-shadow: 0 0 12px rgba(177, 0, 255, 0.25);
+}
+
+/* Логика скрытия/показа капсул */
+.incubator-zone {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.incubator-capsule {
+    display: none; /* Прячем все по дефолту */
+}
+
+.incubator-capsule.active-capsule {
+    display: flex; /* Показываем только активную */
+}
+
+/* Фиолетовое фоновое свечение для Капсулы 2 */
+.neon-flicker-glow-purple {
+    position: absolute;
+    top: 15%;
+    width: 60%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(177, 0, 255, 0.25) 0%, rgba(177, 0, 255, 0.05) 50%, rgba(0, 0, 0, 0) 70%);
+    z-index: 1;
+    border-radius: 50%;
+    animation: neonFlicker 4s linear infinite; /* Юзаем твою анимацию мерцания */
+}
+
+/* Секретный левитирующий знак вопроса */
+.locked-question-mark {
+    font-size: 70px;
+    font-weight: 900;
+    color: rgba(177, 0, 255, 0.95);
+    text-shadow: 
+        0 0 15px rgba(177, 0, 255, 0.9),
+        0 0 35px rgba(234, 0, 255, 0.6);
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    line-height: 65px;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto;
+    user-select: none;
+    animation: questionMarkFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes questionMarkFloat {
+    0% { transform: scale(1) translateY(0px); filter: brightness(0.85); }
+    100% { transform: scale(1.06) translateY(-5px); filter: brightness(1.2); }
+}
+
+/* Фиолетовое космическое зерно №2 (Размеры 1 в 1 как у главного) */
+#flower-image-purple {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    transform: scale(1.8);
+    transform-origin: center center;
+    filter: 
+        drop-shadow(0 0 15px rgba(177, 0, 255, 0.95)) 
+        drop-shadow(0 0 40px rgba(234, 0, 255, 0.7));
+    animation: purpleCosmicPulse 4s ease-in-out infinite alternate;
+    transition: transform 0.3s ease;
+
+    /* Тоже делаем сквозным */
+    pointer-events: none; 
+}
+
+@keyframes purpleCosmicPulse {
+    0% {
+        filter: 
+            drop-shadow(0 0 10px rgba(177, 0, 255, 0.8))
+            drop-shadow(0 0 30px rgba(234, 0, 255, 0.5));
+    }
+    50% {
+        filter: 
+            drop-shadow(0 0 25px rgba(177, 0, 255, 1))
+            drop-shadow(0 0 55px rgba(234, 0, 255, 0.8));
+    }
+    100% {
+        filter: 
+            drop-shadow(0 0 18px rgba(177, 0, 255, 0.9))
+            drop-shadow(0 0 45px rgba(234, 0, 255, 0.6));
+    }
+}
+
+
+/* ==========================================================================
+   СТАРАЯ СТЕКЛЯННАЯ КОЛБА (ОСТАВЛЕНА ДЛЯ СОВМЕСТИМОСТИ)
+   ========================================================================== */
+.glass-capsule {
+    position: relative;
+    width: 140px;
+    height: 220px;
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.05) 0%, rgba(0, 0, 0, 0.4) 20%, rgba(0, 0, 0, 0.4) 80%, rgba(0, 243, 255, 0.05) 100%);
+    border-left: 2px solid rgba(0, 243, 255, 0.3);
+    border-right: 2px solid rgba(0, 243, 255, 0.3);
+    border-radius: 60px / 20px; 
+    box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.flower-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;   
-    border-radius: 24px; 
-    z-index: 2;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+.glass-capsule::before,
+.glass-capsule::after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(212, 175, 55, 0.6);
+    background: #0a0c10;
+    z-index: 4;
+}
+
+.glass-capsule::before { top: -10px; box-shadow: 0 5px 10px rgba(0, 243, 255, 0.2); }
+.glass-capsule::after { bottom: -10px; box-shadow: 0 -5px 10px rgba(0, 243, 255, 0.2); }
+
+.capsule-glow-top {
+    position: absolute;
+    top: 0;
+    width: 60%;
+    height: 100px;
+    background: linear-gradient(180deg, rgba(0, 243, 255, 0.3) 0%, transparent 100%);
+    filter: blur(10px);
+    z-index: 1;
 }
 
 .flower-glow {
     position: absolute;
-    width: 220px;        
-    height: 220px;
-    background: rgba(46, 204, 113, 0.35);
+    width: 80px;
+    height: 120px;
+    background: rgba(0, 243, 255, 0.4);
     border-radius: 50%;
-    filter: blur(30px); 
+    filter: blur(25px);
     z-index: 1;
-    animation: gardenGlow 2.5s infinite alternate ease-in-out;
 }
 
-#flower-stage {
-    position: absolute;
-    bottom: -12px;       
-    background: #27ae60;
-    color: white;
-    padding: 5px 16px;   
-    border-radius: 20px; 
-    font-size: 11px;     
-    font-weight: bold;
+.flower-avatar-wrapper {
+    position: relative;
+    width: 70px;
+    height: 100px;
     z-index: 3;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* 5. Прогресс-бар */
+.flower-avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5)); 
+}
+
+
+/* ==========================================================================
+   НИЖНЯЯ ЧАСТЬ (ПОДВАЛ, ПРОГРЕСС И КНОПКА С ЖЕСТКИМ ФИКСОМ НАВБАРА)
+   ========================================================================== */
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Прогресс-бар */
 .progress-box {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
-
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+}
+#progress-text {
+    font-weight: 700;
+    color: #ffcc00;
+}
 .progress-bg {
     width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    display: block; 
+    position: relative;
 }
 
 .progress-fill {
     height: 100%;
-    background: #2ecc71;
-    width: 0%; /* JS изменит */
-    transition: width 0.5s ease-in-out;
-    box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+    background: linear-gradient(90deg, #00e5ff, #00ff88);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    border-radius: 10px;
+    
+    /* ЖЕСТКИЙ ФИКС НАВБАРА (СПАСАЕТ ОТ РАСПИРАНИЯ) */
+    width: 0%; 
+    flex-grow: 0; 
+    flex-shrink: 0;
+    display: block;
+    
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#progress-text {
-    font-size: 11px;
-    color: #a6acaf;
-    margin: 0;
-}
-
-/* 6. Реферальный блок */
-.ref-box {
-    display: flex;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 20px;
-}
-
-.ref-box input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 8px 10px;
-    color: #fff;
-    font-size: 11px;
-    outline: none;
-}
-
-.ref-box button {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: #fff;
-    padding: 0 12px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.ref-box button:active {
-    background: #2ecc71;
-    color: #000;
-}
-
-/* 8. Большая кнопка приглашения */
-.share-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #27ae60, #2ecc71);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: bold;
+/* Неоновая кнопка */
+.share-btn-neon {
+    background: linear-gradient(90deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 255, 136, 0.15) 100%);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    color: #ffffff;
+    padding: 14px;
+    border-radius: 14px;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.share-btn-neon:hover {
+    border-color: #00ff88;
+    background: linear-gradient(90deg, rgba(0, 229, 255, 0.25) 0%, rgba(0, 255, 136, 0.25) 100%);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+    transform: translateY(-1px);
+}
+.share-btn-neon:active {
+    transform: translateY(1px);
+}
+.btn-icon {
+    font-size: 16px;
 }
 
-.share-btn:active {
-    transform: scale(0.98);
-}
-
-/* Анимации */
+/* Анимации скольжения вверх */
 @keyframes gardenSlideUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes gardenGlow {
-    0% { transform: scale(0.9); opacity: 0.5; }
-    100% { transform: scale(1.1); opacity: 0.9; }
 }
 
 /* КНОПКА */

@@ -787,21 +787,45 @@ async function finalCheckout() {
 let initGardenData;
 let updateFlowerStage;
 
+// Базовые стадии цветка для Инкубатора 01
+const stages = [
+    { min: 0, max: 20, name: "Зерно космоса", img: "./img/seed.png" },
+    { min: 21, max: 50, name: "Первый росток", img: "./img/sprout.png" },
+    { min: 51, max: 100, name: "Энергетическая колба", img: "./img/flower.png" }
+];
+
 document.addEventListener("DOMContentLoaded", () => {
     
+    // Элементы модалки и навигации
     const gardenFab = document.getElementById('garden-fab');
     const gardenModal = document.getElementById('garden-modal');
     const closeGardenBtn = document.getElementById('close-garden');
     const shareBtn = document.getElementById('share-btn');
     
+    // Элементы инкубатора
     const flowerImage = document.getElementById('flower-image');
-    const flowerStageText = document.getElementById('flower-stage');
+    const flowerStageText = document.getElementById('flower-stage-name'); 
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
     
-    // Ссылка теперь хранится просто в памяти скрипта, а не в инпуте
-    let generatedRefLink = ""; 
+    // Элементы переключения инкубаторов (Табы)
+    const tabCapsule1 = document.getElementById('tab-capsule-1');
+    const tabCapsule2 = document.getElementById('tab-capsule-2');
+    const capsule1 = document.getElementById('capsule-1');
+    const capsule2 = document.getElementById('capsule-2');
 
+    // Элементы боковых датчиков для динамической смены в JS
+    const flowerStageNum = document.getElementById('flower-stage'); // Твой ID из HTML
+    const envStatus = document.querySelector('.side-panel-right .stat-indicator:nth-child(1) .stat-value');
+    const envTemp = document.querySelector('.side-panel-right .stat-indicator:nth-child(2) .stat-value');
+    const envHumidity = document.querySelector('.side-panel-right .stat-indicator:nth-child(3) .stat-value');
+    const flowerPotential = document.querySelector('.side-panel-left .stat-indicator:nth-child(3) .stat-value');
+    
+    let generatedRefLink = ""; 
+    let globalCurrentScore = 0; // Переменная для хранения текущего баланса
+    let activeTab = 1;          // Храним информацию, какой таб сейчас открыт
+
+    // --- ЛОГИКА ОТКРЫТИЯ И ЗАКРЫТИЯ МОДАЛКИ ---
     if (gardenFab && gardenModal) {
         gardenFab.addEventListener('click', () => {
             gardenModal.style.display = 'flex'; 
@@ -823,53 +847,143 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // --- УПРАВЛЕНИЕ ДАТЧИКАМИ ЧЕРЕЗ JS ПРИ ПЕРЕКЛЮЧЕНИИ ТАБОВ ---
+    function renderTabsAndStats() {
+        if (activeTab === 1) {
+            // Переключение классов табов и капсул
+            tabCapsule1.classList.add('active-cyan');
+            tabCapsule2.classList.remove('active-purple');
+            capsule1.classList.add('active-capsule');
+            capsule2.classList.remove('active-capsule');
+
+            // Возвращаем дефолтные параметры Инкубатора 01
+            if (flowerStageNum) {
+                flowerStageNum.innerText = "01";
+                flowerStageNum.className = "stat-value highlight-cyan";
+            }
+            if (flowerPotential) flowerPotential.innerText = "100%";
+            if (envStatus) {
+                envStatus.innerText = "ОПТИМАЛЬНЕ";
+                envStatus.className = "stat-value text-success";
+            }
+            if (envTemp) envTemp.innerText = "22.5 °C";
+            if (envHumidity) envHumidity.innerText = "60%";
+
+            // Прогресс-бар показывает реальный опыт для первого инкубатора
+            const maxScore = 100;
+            let progressPercent = Math.min((globalCurrentScore / maxScore) * 100, 100);
+            if (progressText) progressText.innerText = `${globalCurrentScore} / ${maxScore} XP`;
+            if (progressFill) progressFill.style.width = `${progressPercent}%`;
+
+            // Возвращаем текстовое имя стадии из массива
+            let currentStageIndex = stages.findIndex(stage => globalCurrentScore >= stage.min && globalCurrentScore <= stage.max);
+            if (currentStageIndex === -1) currentStageIndex = stages.length - 1;
+            if (flowerStageText) flowerStageText.innerText = stages[currentStageIndex].name;
+
+        } else if (activeTab === 2) {
+            // Переключение классов табов и капсул
+            tabCapsule2.classList.add('active-purple');
+            tabCapsule1.classList.remove('active-cyan');
+            capsule2.classList.add('active-capsule');
+            capsule1.classList.remove('active-capsule');
+
+            if (flowerStageNum) {
+                flowerStageNum.innerText = "02";
+                flowerStageNum.className = "stat-value highlight-purple"; // Использует фиолетовый неон
+            }
+
+            // ЕСЛИ ИНКУБАТОР 02 ЕЩЕ ЗАБЛОКИРОВАН (Score < 100) — НИЧЕГО НЕ ИЗВЕСТНО
+            if (globalCurrentScore < 100) {
+                if (flowerStageText) flowerStageText.innerText = "ЗАБЛОКОВАНО";
+                if (flowerPotential) flowerPotential.innerText = "??%";
+                if (envStatus) {
+                    envStatus.innerText = "НЕВИЗНАЧЕНО";
+                    envStatus.className = "stat-value text-muted";
+                }
+                if (envTemp) envTemp.innerText = "--.- °C";
+                if (envHumidity) envHumidity.innerText = "--%";
+                if (progressText) progressText.innerText = "0 / ??? XP";
+                if (progressFill) progressFill.style.width = "0%";
+            } 
+            // ЕСЛИ ИНКУБАТОР ОТКРЫТ (Score >= 100) — ИНФОРМАЦИЯ ИЗ ТВОЕГО МАКЕТА
+            else {
+                if (flowerStageText) flowerStageText.innerText = "ПЕРШИЙ РОСТОК";
+                if (flowerPotential) flowerPotential.innerText = "23%";
+                if (envStatus) {
+                    envStatus.innerText = "ОПТИМАЛЬНА";
+                    envStatus.className = "stat-value text-success";
+                }
+                if (envTemp) envTemp.innerText = "23.1 °C";
+                if (envHumidity) envHumidity.innerText = "68%";
+                if (progressText) progressText.innerText = "0 / 100 XP"; // Или твоя логика для след. уровней
+                if (progressFill) progressFill.style.width = "0%";
+            }
+        }
+    }
+
+    // Навешиваем клики на табы
+    if (tabCapsule1 && tabCapsule2 && capsule1 && capsule2) {
+        tabCapsule1.addEventListener('click', () => {
+            activeTab = 1;
+            renderTabsAndStats();
+        });
+
+        tabCapsule2.addEventListener('click', () => {
+            activeTab = 2;
+            renderTabsAndStats();
+        });
+    }
+
+    // --- 1. ИНИЦИАЛИЗАЦИЯ ДАННЫХ САДА ---
     initGardenData = function() {
         const tg = window.Telegram?.WebApp;
         const userId = tg?.initDataUnsafe?.user?.id || "123456789"; 
         const botUsername = "AlexaFleurBot"; 
         
-        // Записываем ссылку в переменную для шеринга
         generatedRefLink = `https://t.me/${botUsername}?start=ref_${userId}`;
-
-        const testUserScore = 40; 
-        updateFlowerStage(testUserScore);
+        loadUserBalance();
     };
 
+    // --- 2. ЛОГИКА РОСТА ЗЕРНА И БЛОКИРОВКИ КАПСУЛЫ ---
     updateFlowerStage = function(score) {
-        const currentScore = parseInt(score) || 0; 
-        const maxScore = 100; 
-        const progressPercent = Math.min((currentScore / maxScore) * 100, 100);
+        let currentScore = parseInt(score);
+        if (isNaN(currentScore) || currentScore < 0) {
+            currentScore = 0;
+        }
         
-        if (progressFill) progressFill.style.width = `${progressPercent}%`;
-        if (progressText) progressText.innerText = `${currentScore} / ${maxScore} XP`;
+        globalCurrentScore = currentScore; // Сохраняем в глобальную переменную баланса
         
-        const stages = [
-            { min: 0,   max: 25,  name: "ЗЕРНЯТКО", img: "https://images.unsplash.com/photo-1533038590040-e8585526b5e1?auto=format&fit=crop&w=500&q=80" },
-            { min: 26,  max: 50,  name: "ПАРОСТОК", img: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=500&q=80" },
-            { min: 51,  max: 75,  name: "СТЕБЛО",   img: "https://images.unsplash.com/photo-1508556497405-ed7dcd94acfc?auto=format&fit=crop&w=500&q=80" },
-            { min: 76,  max: 100, name: "БУТОН",    img: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=500&q=80" },
-            { min: 101, max: Infinity, name: "РОЗКВІТЛИЙ БУКЕТ!", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80" }
-        ];
-        
+        // Обновляем картинку первого инкубатора на основе стадий
         let currentStageIndex = stages.findIndex(stage => currentScore >= stage.min && currentScore <= stage.max);
         if (currentStageIndex === -1) currentStageIndex = stages.length - 1;
         
         const activeStage = stages[currentStageIndex];
-        if (flowerStageText) flowerStageText.innerText = activeStage.name;
-        
-        if (flowerImage) {
-            flowerImage.style.transform = "scale(0.95)";
-            setTimeout(() => {
-                flowerImage.src = activeStage.img; 
-                flowerImage.style.transform = "scale(1)";
-            }, 100);
+        if (flowerImage && flowerImage.tagName === "IMG") { 
+            flowerImage.src = activeStage.img; 
         }
+
+        // Логика отображения скрытого контента внутри Капсулы 2
+        const lockedIcon = document.getElementById('capsule-locked-icon');
+        const purpleFlowerImg = document.getElementById('flower-image-purple');
+
+        if (lockedIcon && purpleFlowerImg) {
+            if (currentScore >= 100) {
+                lockedIcon.style.display = 'none';        
+                purpleFlowerImg.style.display = 'block';  
+            } else {
+                lockedIcon.style.display = 'block';       
+                purpleFlowerImg.style.display = 'none';   
+            }
+        }
+
+        // Рендерим текущее состояние панелей в зависимости от того, какой таб выбран
+        renderTabsAndStats();
     };
 
-    // Кнопка "Запросити друга" — использует ссылку из памяти
+    // Кнопка "Запросити друга"
     if (shareBtn) {
         shareBtn.addEventListener('click', () => {
-            const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальний сад та отримати бонус!");
+            const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальный сад та отримати бонус!");
             const shareUrl = `https://t.me/share/url?url=${generatedRefLink}&text=${text}`;
             
             if (window.Telegram?.WebApp) {
@@ -877,9 +991,59 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 window.open(shareUrl, '_blank');
             }
+            
+            setTimeout(() => {
+                loadUserBalance();
+            }, 3000);
         });
     }
+    
+    const tg = window.Telegram?.WebApp;
+    const userId = tg?.initDataUnsafe?.user?.id || "123456789";
+    generatedRefLink = `https://t.me/AlexaFleurBot?start=ref_${userId}`;
 });
+
+// --- 3. ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА ИЗ N8N ---
+async function loadUserBalance() {
+    const webapp = window.Telegram?.WebApp;
+    if (!webapp) return;
+
+    const user = webapp.initDataUnsafe?.user;
+    if (!user) return;
+
+    const webhookUrl = 'https://tiktiok.xyz/webhook-test/getusersbalanse'; 
+
+    try {
+        const response = await fetch(`${webhookUrl}?telegram_id=${user.id}`);
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data && data.balance !== undefined) {
+                const realBalance = data.balance;
+                updateBalanceUI(realBalance);
+                updateFlowerStage(realBalance);
+            }
+        }
+    } catch (error) {
+        console.error('Не удалось загрузить баланс:', error);
+    }
+}
+
+function updateBalanceUI(balanceValue) {
+    const balanceElement = document.getElementById('user-balance'); 
+    if (balanceElement) {
+        balanceElement.textContent = balanceValue;
+    }
+}
+
+if (window.Telegram?.WebApp) {
+    window.Telegram.WebApp.ready();
+    loadUserBalance();
+    
+    setInterval(() => {
+        loadUserBalance();
+    }, 6000);
+}
 
 // 9. АНИМАЦИЯ ПОЯВЛЕНИЯ И УДАЛЕНИЯ ПУЛЬСИРОВАННОЙ КНОПКИ (ЧАТ)
 function startChatPulse() {
