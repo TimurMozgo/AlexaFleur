@@ -981,20 +981,27 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Кнопка "Запросити друга"
+    // Реферальная кнопка — ГЕНЕРИРУЕТ ПРЯМУЮ ССЫЛКУ НА APP
     if (shareBtn) {
         shareBtn.addEventListener('click', () => {
-            const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальный сад та отримати бонус!");
+            const tg = window.Telegram?.WebApp;
+            const userId = tg?.initDataUnsafe?.user?.id || "123456789";
+            
+            // КРИТИЧЕСКИЙ ФИКС: Ссылка ведет напрямую в твое Mini App!
+            // Замени AlexaFleurBot на юзернейм твоего бота
+            // Замени app_name на короткое имя твоего Web App (задается в BotFather -> Bot Settings -> WebApp)
+            const appUrl = "https://t.me/AlexaFleurBot/app";
+            
+            generatedRefLink = `${appUrl}?startapp=ref_${userId}`;
+            
+            const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальный сад!");
             const shareUrl = `https://t.me/share/url?url=${generatedRefLink}&text=${text}`;
             
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.openTelegramLink(shareUrl);
+            if (tg) {
+                tg.openTelegramLink(shareUrl);
             } else {
                 window.open(shareUrl, '_blank');
             }
-            
-            setTimeout(() => {
-                loadUserBalance();
-            }, 3000);
         });
     }
     
