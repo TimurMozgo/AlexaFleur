@@ -1007,6 +1007,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА И ПЕРЕДАЧА РЕФЕРАЛА В N8N ---
+
 async function loadUserBalance() {
     const webapp = window.Telegram?.WebApp;
     if (!webapp) return;
@@ -1014,47 +1015,32 @@ async function loadUserBalance() {
     const user = webapp.initDataUnsafe?.user;
     if (!user) return;
 
-    // Вытаскиваем параметр рефералки, который Telegram привязал к кнопке "Магазин" после старта по ссылке
-    const startParam = webapp.initDataUnsafe?.start_param || "";
-    
-    let inviterId = "";
-    // Если параметр есть и он начинается с "ref_", вырезаем оттуда чистый ID пригласившего
-    if (startParam && startParam.startsWith("ref_")) {
-        inviterId = startParam.replace("ref_", "");
-    }
+    // 1. Вытаскиваем реферальный ID, который дал Телеграм при входе (например: "12345" или "ref_12345")
+    const startParam = webapp.initDataUnsafe?.start_param; 
 
     const webhookUrl = 'https://tiktiok.xyz/webhook-test/getusersbalanse'; 
-
-    // Формируем URL. Отправляем текущего юзера и inviter_id (если есть)
-    const finalUrl = `${webhookUrl}?telegram_id=${user.id}&inviter_id=${inviterId}`;
+    
+    // 2. Склеиваем URL. Если startParam есть — добавляем его как &inviter_id=...
+    let finalUrl = `${webhookUrl}?telegram_id=${user.id}`;
+    if (startParam) {
+        finalUrl += `&inviter_id=${startParam}`;
+    }
 
     try {
         const response = await fetch(finalUrl);
         if (response.ok) {
             let data = await response.json();
-            
-            // ЖЕСТКИЙ АУДИТ ОТВЕТА: Если n8n вернул массив [{...}], вытаскиваем из него объект
-            if (Array.isArray(data)) {
-                data = data[0];
-            }
+            if (Array.isArray(data)) data = data[0];
             
             if (data && data.balance !== undefined) {
                 const realBalance = parseInt(data.balance);
-                
-                // Обновляем баланс на главной странице магазина
                 const balanceElement = document.getElementById('user-balance'); 
-                if (balanceElement) {
-                    balanceElement.textContent = realBalance;
-                }
-                
-                // Передаем баланс в логику роста цветка и открытия Инкубатора 02
-                if (typeof updateFlowerStage === 'function') {
-                    updateFlowerStage(realBalance);
-                }
+                if (balanceElement) balanceElement.textContent = realBalance;
+                if (typeof updateFlowerStage === 'function') updateFlowerStage(realBalance);
             }
         }
     } catch (error) {
-        console.error('Не удалось загрузить баланс:', error);
+        console.error('Ошибка работы вебхука баланса:', error);
     }
 }
 
