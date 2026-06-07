@@ -987,12 +987,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const tg = window.Telegram?.WebApp;
             const userId = tg?.initDataUnsafe?.user?.id || "123456789";
             
-            // КРИТИЧЕСКИЙ ФИКС: Ссылка ведет напрямую в твое Mini App!
-            // Замени AlexaFleurBot на юзернейм твоего бота
-            // Замени app_name на короткое имя твоего Web App (задается в BotFather -> Bot Settings -> WebApp)
-            const appUrl = "https://t.me/AlexaFleurBot/app";
-            
-            generatedRefLink = `${appUrl}?startapp=ref_${userId}`;
+            // Ссылка на обычного бота, так как у нас работает кнопка "Магазин"
+            generatedRefLink = `https://t.me/AlexaFleurBot?start=ref_${userId}`;
             
             const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальный сад!");
             const shareUrl = `https://t.me/share/url?url=${generatedRefLink}&text=${text}`;
@@ -1010,7 +1006,6 @@ document.addEventListener("DOMContentLoaded", () => {
     generatedRefLink = `https://t.me/AlexaFleurBot?start=ref_${userId}`;
 });
 
-// --- 3. ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА ИЗ N8N ---
 // --- ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА И ПЕРЕДАЧА РЕФЕРАЛА В N8N ---
 async function loadUserBalance() {
     const webapp = window.Telegram?.WebApp;
@@ -1019,7 +1014,7 @@ async function loadUserBalance() {
     const user = webapp.initDataUnsafe?.user;
     if (!user) return;
 
-    // Вытаскиваем параметр рефералки (например: "ref_6750749768")
+    // Вытаскиваем параметр рефералки, который Telegram привязал к кнопке "Магазин" после старта по ссылке
     const startParam = webapp.initDataUnsafe?.start_param || "";
     
     let inviterId = "";
@@ -1030,20 +1025,32 @@ async function loadUserBalance() {
 
     const webhookUrl = 'https://tiktiok.xyz/webhook-test/getusersbalanse'; 
 
-    // Формируем URL. Теперь мы ВСЕГДА отправляем в n8n параметр inviter_id
-    // Если зашли без рефки, он будет просто пустым
+    // Формируем URL. Отправляем текущего юзера и inviter_id (если есть)
     const finalUrl = `${webhookUrl}?telegram_id=${user.id}&inviter_id=${inviterId}`;
 
     try {
         const response = await fetch(finalUrl);
         if (response.ok) {
-            const data = await response.json();
+            let data = await response.json();
+            
+            // ЖЕСТКИЙ АУДИТ ОТВЕТА: Если n8n вернул массив [{...}], вытаскиваем из него объект
+            if (Array.isArray(data)) {
+                data = data[0];
+            }
             
             if (data && data.balance !== undefined) {
-                const realBalance = data.balance;
+                const realBalance = parseInt(data.balance);
                 
-                updateBalanceUI(realBalance);
-                updateFlowerStage(realBalance);
+                // Обновляем баланс на главной странице магазина
+                const balanceElement = document.getElementById('user-balance'); 
+                if (balanceElement) {
+                    balanceElement.textContent = realBalance;
+                }
+                
+                // Передаем баланс в логику роста цветка и открытия Инкубатора 02
+                if (typeof updateFlowerStage === 'function') {
+                    updateFlowerStage(realBalance);
+                }
             }
         }
     } catch (error) {
