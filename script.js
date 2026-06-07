@@ -1001,7 +1001,7 @@ async function loadUserBalance() {
     if (!user) return;
 
     const startParam = webapp.initDataUnsafe?.start_param; 
-    const webhookUrl = 'https://tiktiok.xyz/webhook-test/getusersbalanse'; 
+    const webhookUrl = 'https://tiktiok.xyz/webhook/getusersbalanse'; 
     
     let finalUrl = `${webhookUrl}?telegram_id=${user.id}`;
     if (startParam) {
