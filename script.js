@@ -815,7 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const capsule2 = document.getElementById('capsule-2');
 
     // Элементы боковых датчиков для динамической смены в JS
-    const flowerStageNum = document.getElementById('flower-stage'); // Твой ID из HTML
+    const flowerStageNum = document.getElementById('flower-stage'); 
     const envStatus = document.querySelector('.side-panel-right .stat-indicator:nth-child(1) .stat-value');
     const envTemp = document.querySelector('.side-panel-right .stat-indicator:nth-child(2) .stat-value');
     const envHumidity = document.querySelector('.side-panel-right .stat-indicator:nth-child(3) .stat-value');
@@ -850,13 +850,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- УПРАВЛЕНИЕ ДАТЧИКАМИ ЧЕРЕЗ JS ПРИ ПЕРЕКЛЮЧЕНИИ ТАБОВ ---
     function renderTabsAndStats() {
         if (activeTab === 1) {
-            // Переключение классов табов и капсул
             tabCapsule1.classList.add('active-cyan');
             tabCapsule2.classList.remove('active-purple');
             capsule1.classList.add('active-capsule');
             capsule2.classList.remove('active-capsule');
 
-            // Возвращаем дефолтные параметры Инкубатора 01
             if (flowerStageNum) {
                 flowerStageNum.innerText = "01";
                 flowerStageNum.className = "stat-value highlight-cyan";
@@ -869,19 +867,16 @@ document.addEventListener("DOMContentLoaded", () => {
             if (envTemp) envTemp.innerText = "22.5 °C";
             if (envHumidity) envHumidity.innerText = "60%";
 
-            // Прогресс-бар показывает реальный опыт для первого инкубатора
             const maxScore = 100;
             let progressPercent = Math.min((globalCurrentScore / maxScore) * 100, 100);
             if (progressText) progressText.innerText = `${globalCurrentScore} / ${maxScore} XP`;
             if (progressFill) progressFill.style.width = `${progressPercent}%`;
 
-            // Возвращаем текстовое имя стадии из массива
             let currentStageIndex = stages.findIndex(stage => globalCurrentScore >= stage.min && globalCurrentScore <= stage.max);
             if (currentStageIndex === -1) currentStageIndex = stages.length - 1;
             if (flowerStageText) flowerStageText.innerText = stages[currentStageIndex].name;
 
         } else if (activeTab === 2) {
-            // Переключение классов табов и капсул
             tabCapsule2.classList.add('active-purple');
             tabCapsule1.classList.remove('active-cyan');
             capsule2.classList.add('active-capsule');
@@ -889,10 +884,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (flowerStageNum) {
                 flowerStageNum.innerText = "02";
-                flowerStageNum.className = "stat-value highlight-purple"; // Использует фиолетовый неон
+                flowerStageNum.className = "stat-value highlight-purple"; 
             }
 
-            // ЕСЛИ ИНКУБАТОР 02 ЕЩЕ ЗАБЛОКИРОВАН (Score < 100) — НИЧЕГО НЕ ИЗВЕСТНО
             if (globalCurrentScore < 100) {
                 if (flowerStageText) flowerStageText.innerText = "ЗАБЛОКОВАНО";
                 if (flowerPotential) flowerPotential.innerText = "??%";
@@ -904,9 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (envHumidity) envHumidity.innerText = "--%";
                 if (progressText) progressText.innerText = "0 / ??? XP";
                 if (progressFill) progressFill.style.width = "0%";
-            } 
-            // ЕСЛИ ИНКУБАТОР ОТКРЫТ (Score >= 100) — ИНФОРМАЦИЯ ИЗ ТВОЕГО МАКЕТА
-            else {
+            } else {
                 if (flowerStageText) flowerStageText.innerText = "ПЕРШИЙ РОСТОК";
                 if (flowerPotential) flowerPotential.innerText = "23%";
                 if (envStatus) {
@@ -915,13 +907,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (envTemp) envTemp.innerText = "23.1 °C";
                 if (envHumidity) envHumidity.innerText = "68%";
-                if (progressText) progressText.innerText = "0 / 100 XP"; // Или твоя логика для след. уровней
+                if (progressText) progressText.innerText = "0 / 100 XP"; 
                 if (progressFill) progressFill.style.width = "0%";
             }
         }
     }
 
-    // Навешиваем клики на табы
     if (tabCapsule1 && tabCapsule2 && capsule1 && capsule2) {
         tabCapsule1.addEventListener('click', () => {
             activeTab = 1;
@@ -934,7 +925,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 1. ИНИЦИАЛИЗАЦИЯ ДАННЫХ САДА ---
+    // --- ИНИЦИАЛИЗАЦИЯ ДАННЫХ САДА ---
     initGardenData = function() {
         const tg = window.Telegram?.WebApp;
         const userId = tg?.initDataUnsafe?.user?.id || "123456789"; 
@@ -944,16 +935,15 @@ document.addEventListener("DOMContentLoaded", () => {
         loadUserBalance();
     };
 
-    // --- 2. ЛОГИКА РОСТА ЗЕРНА И БЛОКИРОВКИ КАПСУЛЫ ---
+    // --- ЛОГИКА РОСТА ЗЕРНА И БЛОКИРОВКИ КАПСУЛЫ ---
     updateFlowerStage = function(score) {
         let currentScore = parseInt(score);
         if (isNaN(currentScore) || currentScore < 0) {
             currentScore = 0;
         }
         
-        globalCurrentScore = currentScore; // Сохраняем в глобальную переменную баланса
+        globalCurrentScore = currentScore; 
         
-        // Обновляем картинку первого инкубатора на основе стадий
         let currentStageIndex = stages.findIndex(stage => currentScore >= stage.min && currentScore <= stage.max);
         if (currentStageIndex === -1) currentStageIndex = stages.length - 1;
         
@@ -962,7 +952,6 @@ document.addEventListener("DOMContentLoaded", () => {
             flowerImage.src = activeStage.img; 
         }
 
-        // Логика отображения скрытого контента внутри Капсулы 2
         const lockedIcon = document.getElementById('capsule-locked-icon');
         const purpleFlowerImg = document.getElementById('flower-image-purple');
 
@@ -976,18 +965,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Рендерим текущее состояние панелей в зависимости от того, какой таб выбран
         renderTabsAndStats();
     };
 
-    // Кнопка "Запросити друга"
-    // Реферальная кнопка — ГЕНЕРИРУЕТ ПРЯМУЮ ССЫЛКУ НА APP
     if (shareBtn) {
         shareBtn.addEventListener('click', () => {
             const tg = window.Telegram?.WebApp;
             const userId = tg?.initDataUnsafe?.user?.id || "123456789";
             
-            // Ссылка на обычного бота, так как у нас работает кнопка "Магазин"
             generatedRefLink = `https://t.me/AlexaFleurBot?start=ref_${userId}`;
             
             const text = encodeURIComponent("Привіт! Заходь у квіткову вітрину AlexaFleur 🌱 Допоможи мені виростити віртуальный сад!");
@@ -1006,7 +991,7 @@ document.addEventListener("DOMContentLoaded", () => {
     generatedRefLink = `https://t.me/AlexaFleurBot?start=ref_${userId}`;
 });
 
-// --- ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА И ПЕРЕДАЧА РЕФЕРАЛА В N8N ---
+// --- ПОЛУЧЕНИЕ РЕАЛЬНОГО БАЛАНСА ИЗ N8N ---
 
 async function loadUserBalance() {
     const webapp = window.Telegram?.WebApp;
@@ -1015,12 +1000,9 @@ async function loadUserBalance() {
     const user = webapp.initDataUnsafe?.user;
     if (!user) return;
 
-    // 1. Вытаскиваем реферальный ID, который дал Телеграм при входе (например: "12345" или "ref_12345")
     const startParam = webapp.initDataUnsafe?.start_param; 
-
     const webhookUrl = 'https://tiktiok.xyz/webhook-test/getusersbalanse'; 
     
-    // 2. Склеиваем URL. Если startParam есть — добавляем его как &inviter_id=...
     let finalUrl = `${webhookUrl}?telegram_id=${user.id}`;
     if (startParam) {
         finalUrl += `&inviter_id=${startParam}`;
@@ -1030,13 +1012,33 @@ async function loadUserBalance() {
         const response = await fetch(finalUrl);
         if (response.ok) {
             let data = await response.json();
+            
+            // Логируем чистый ответ, чтобы видеть, какие ключи приходят из Таблицы
+            console.log("Ответ от n8n:", JSON.stringify(data));
+
             if (Array.isArray(data)) data = data[0];
             
-            if (data && data.balance !== undefined) {
-                const realBalance = parseInt(data.balance);
-                const balanceElement = document.getElementById('user-balance'); 
-                if (balanceElement) balanceElement.textContent = realBalance;
-                if (typeof updateFlowerStage === 'function') updateFlowerStage(realBalance);
+            if (data) {
+                // Умный поиск баланса: проверяем поочередно xp, XP, balance или Монеты
+                const rawBalance = data.xp !== undefined ? data.xp : 
+                                   data.XP !== undefined ? data.XP : 
+                                   data.balance !== undefined ? data.balance : 
+                                   data.coins !== undefined ? data.coins : null;
+
+                if (rawBalance !== null) {
+                    const realBalance = parseInt(rawBalance, 10);
+                    
+                    // Обновляем цифру на экране игры
+                    const balanceElement = document.getElementById('user-balance'); 
+                    if (balanceElement) {
+                        balanceElement.textContent = realBalance;
+                    }
+                    
+                    // Передаем баланс в логику отрисовки цветка
+                    if (typeof updateFlowerStage === 'function') {
+                        updateFlowerStage(realBalance);
+                    }
+                }
             }
         }
     } catch (error) {
@@ -1044,16 +1046,14 @@ async function loadUserBalance() {
     }
 }
 
-function updateBalanceUI(balanceValue) {
-    const balanceElement = document.getElementById('user-balance'); 
-    if (balanceElement) {
-        balanceElement.textContent = balanceValue;
-    }
-}
-
+// Инициализация Телеграма с микро-задержкой для стабильности функций
 if (window.Telegram?.WebApp) {
     window.Telegram.WebApp.ready();
-    loadUserBalance();
+    
+    // Даем DOMContentLoaded 150мс, чтобы гарантированно объявить функции
+    setTimeout(() => {
+        loadUserBalance();
+    }, 150);
     
     setInterval(() => {
         loadUserBalance();
