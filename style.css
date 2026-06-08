@@ -1032,9 +1032,9 @@ header {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(5, 7, 10, 0.85); /* Максимально темный космос */
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    background: rgba(3, 5, 8, 0.9); /* Сделали еще чернее для контраста */
+    backdrop-filter: blur(18px); /* Чуть сильнее размытие для глубины */
+    -webkit-backdrop-filter: blur(18px);
     z-index: 99999;
     display: none; /* JS переключит на flex */
     align-items: center;
@@ -1045,13 +1045,19 @@ header {
 
 /* 3. Главная Модалка — стиль стеклянной панели */
 .garden-modal {
-    background: linear-gradient(180deg, rgba(20, 25, 35, 0.8) 0%, rgba(10, 12, 18, 0.95) 100%);
-    border: 1px solid rgba(212, 175, 55, 0.2); /* Золотая окантовка */
+    /* Глубокий черный фон с едва заметным переходом */
+    background: linear-gradient(180deg, rgba(15, 18, 25, 0.9) 0%, rgba(5, 7, 10, 0.98) 100%);
+    
+    /* Золотая окантовка стала чуть заметнее и благороднее */
+    border: 1px solid rgba(212, 175, 55, 0.4); 
     border-radius: 24px;
     width: 100%;
     max-width: 400px;
     padding: 30px 15px 25px 15px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.05);
+    
+    /* Свечение тени заменено с циана на теплое золотое (inset) */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 0 25px rgba(212, 175, 55, 0.08);
+    
     color: #fff;
     text-align: center;
     box-sizing: border-box;
@@ -1064,9 +1070,10 @@ header {
     position: absolute;
     top: 15px;
     right: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    /* Полупрозрачный золотой фон */
+    background: rgba(212, 175, 55, 0.1); 
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    color: rgba(212, 175, 55, 0.6); /* Бледное золото */
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -1080,9 +1087,9 @@ header {
 }
 
 .close-btn:active {
-    background: #e74c3c;
-    color: #fff;
-    border-color: #e74c3c;
+    background: #D4AF37; /* Акцентное Золото при нажатии */
+    color: #000; /* Черный крестик для контраста */
+    border-color: #D4AF37;
 }
 
 /* 4. Хедер: Логотип и Название */
@@ -1153,6 +1160,13 @@ header {
     /* Сохраняем центровку и масштаб */
     transform: translate(-50%, -50%) scale(1.65); 
     transform-origin: center center;
+}
+
+/* Выравниваем второй инкубатор под размер первого */
+#capsule-2 .capsule-bg {
+    transform: translate(-50%, -50%) scale(2); 
+    left: 65%; 
+    margin-top: 15px; 
 }
 
 .levitating-seed-wrapper {
