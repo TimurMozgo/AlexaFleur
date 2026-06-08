@@ -1169,8 +1169,8 @@ header {
 }
 
 .levitating-seed-wrapper img {
-    width: 100%;
-    height: 100%;
+    width: 50%;
+    height: 50%;
     object-fit: contain;
     filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.8)) drop-shadow(0 0 25px rgba(0, 150, 255, 0.4));
 }
