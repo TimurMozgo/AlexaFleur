@@ -791,7 +791,7 @@ let updateFlowerStage;
 const stages = [
     { min: 0, max: 20, name: "Зерно космоса", img: "./img/seed.png" },
     { min: 21, max: 50, name: "Первый росток", img: "./img/sprout.png" },
-    { min: 51, max: 100, name: "Энергетическая колба", img: "./img/flower.png" }
+    { min: 51, max: 100, name: "Энергетическая колба", img: "./img/Incubator.png" }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {

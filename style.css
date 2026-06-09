@@ -1134,7 +1134,7 @@ header {
     gap: 10px;
 }
 
-/* 1. Контейнер капсулы */
+/* 1. Контейнер капсулы — сохраняем твои размеры сетки */
 .incubator-capsule {
     position: relative;
     width: 42%; 
@@ -1145,11 +1145,11 @@ header {
     overflow: visible;
 }
 
-/* 2. Масштаб самой колбы */
+/* 2. Масштаб и позиция базовой колбы */
 .capsule-bg {
     position: absolute;
     top: 50%;
-    left: 65%; /* Сместили на 2% вправо. Если мало — поставь 53% или 54% */
+    left: 65%; /* Центр колбы */
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -1157,59 +1157,84 @@ header {
     pointer-events: none;
     margin-top: 15px;
     
-    /* Сохраняем центровку и масштаб */
     transform: translate(-50%, -50%) scale(1.65); 
     transform-origin: center center;
 }
 
 /* Выравниваем второй инкубатор под размер первого */
 #capsule-2 .capsule-bg {
-    transform: translate(-50%, -50%) scale(2); 
+    /* Срезали масштаб с 2 до 1.75, чтобы он стал равен первому. */
+    /* Если будет чуть мал — поставь 1.8, если велик — 1.70 */
+    transform: translate(-50%, -50%) scale(1.75); 
     left: 65%; 
     margin-top: 15px; 
 }
 
+/* 3. ЖЕСТКИЙ ФИКС ОБЕРТКИ: Теперь она намертво заперта по центру колбы */
 .levitating-seed-wrapper {
-    position: relative;
+    position: absolute; /* Делаем абсолютом */
     z-index: 3;
-    width: 65px;
-    height: 65px;
-    left: 16%;
+    top: 48%;   /* Высота посадки зерна внутри стекла */
+    left: 65%;  /* СТРОГО СОВПАДАЕТ С КОЛБОЙ — теперь они не разъедутся */
+    
+    /* Центрируем через translate, чтобы transform в анимации левитации его не сбрасывал */
+    translate: -50% -50%; 
+    
+    /* Адекватный размер зоны для растения под высоту колбы в 240px */
+    width: 110px;
+    height: 110px;
+    
     display: flex;
     align-items: center;
     justify-content: center;
     animation: floatAnimation 3s ease-in-out infinite;
-    margin-top: -5px; 
 }
 
-.levitating-seed-wrapper img {
-    width: 50%;
-    height: 50%;
+/* Авто-масштабирование для содержимого (картинок и знака "?") */
+.levitating-seed-wrapper img,
+#capsule-locked-icon {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.8)) drop-shadow(0 0 25px rgba(0, 150, 255, 0.4));
 }
 
-/* ТВОЕ ГЛАВНОЕ ЗЕРНО (РАЗМЕРЫ И МАСШТАБ СТРОГО СОХРАНЕНЫ) */
-#flower-image {
-    width: 250px;
-    height: 250px;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-    transform: scale(1.8);
-    transform-origin: center center;
+/* ТВОЕ ГЛАВНОЕ ЗЕРНО (Сохранили все сочные неоновые фильтры) */
+#flower-image, #flower-image-purple {
+    pointer-events: none; 
     filter: 
         drop-shadow(0 0 15px rgba(0, 229, 255, 0.95)) 
         drop-shadow(0 0 40px rgba(165, 0, 255, 0.8)) 
         drop-shadow(0 0 75px rgba(0, 50, 255, 0.6));
     animation: cosmicGlowPulse 4s ease-in-out infinite alternate;
     transition: transform 0.3s ease;
-
-    /* ЖЕСТКИЙ ФИКС: клики проходят сквозь картинку к табам */
-    pointer-events: none; 
 }
 
-/* --- АНИМАЦИЯ ДЫХАНИЯ КОСМИЧЕСКОГО СВЕЧЕНИЯ --- */
+/* СТИЛЬ ЗНАКА ВОПРОСА ДЛЯ ВТОРОЙ КОЛБЫ */
+#capsule-locked-icon {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #a855f7;
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ФОНОВОЕ НЕОНОВОЕ СВЕЧЕНИЕ (Тоже привязали к центру колбы) */
+.neon-flicker-glow {
+    position: absolute;
+    top: 15%;
+    left: 65%;
+    translate: -50% 0;
+    width: 60%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 150, 255, 0.05) 50%, rgba(0, 0, 0, 0) 70%);
+    z-index: 1;
+    border-radius: 50%;
+    animation: neonFlicker 4s linear infinite;
+}
+
+/* --- АНИМАЦИИ (Твои родные, без изменений) --- */
 @keyframes cosmicGlowPulse {
     0% {
         filter: 
@@ -1231,21 +1256,9 @@ header {
     }
 }
 
-.neon-flicker-glow {
-    position: absolute;
-    top: 15%;
-    width: 60%;
-    height: 70%;
-    background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 150, 255, 0.05) 50%, rgba(0, 0, 0, 0) 70%);
-    z-index: 1;
-    border-radius: 50%;
-    animation: neonFlicker 4s linear infinite;
-}
-
-/* --- АНИМАЦИИ ЛЕВИТАЦИИ И МЕРЦАНИЯ --- */
 @keyframes floatAnimation {
     0% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-10px) scale(1.03); }
+    50% { transform: translateY(-8px) scale(1.02); } /* Чуть уменьшил амплитуду, чтобы не билось об крышку */
     100% { transform: translateY(0px) scale(1); }
 }
 
