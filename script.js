@@ -284,38 +284,25 @@ function showFiltered(items) {
     if (!container) return;
     container.innerHTML = ''; 
 
-    // Берем текущую категорию (если переменной вдруг нет, считаем что выбрано "Все")
     const activeCategory = typeof currentCategory !== 'undefined' ? currentCategory : 'Все';
 
     items.forEach(item => {
         const title = (item['Название'] || item['name'] || '').toString().trim();
         const rawStatus = (item['Статус'] || item['status'] || '').toString().trim();
         const itemAddress = (item['Адрес'] || item['address'] || '').toString().trim();
-        
-        // НОВОЕ: Получаем категорию букета из таблицы
         const itemCategory = (item['Категория'] || item['category'] || '').toString().trim();
         
-        // 1. БАЗОВЫЙ ФИЛЬТР: Проверяем активность товара
         if (!title || rawStatus.toLowerCase() !== 'active') return;
 
-        // 2. АДРЕСНЫЙ ФИЛЬТР: Проверяем совпадение адресов
+        // Фильтры
         if (typeof currentAddress !== 'undefined' && currentAddress && currentAddress !== 'undefined') {
             const cleanCurrent = currentAddress.toLowerCase().trim();
             const cleanItem = itemAddress.toLowerCase().trim();
-            if (!cleanItem.includes(cleanCurrent) && !cleanCurrent.includes(cleanItem)) {
-                return;
-            }
-        } else if (typeof currentAddress !== 'undefined' && currentAddress === 'undefined') {
-            return;
+            if (!cleanItem.includes(cleanCurrent) && !cleanCurrent.includes(cleanItem)) return;
         }
 
-        // 3. КАТЕГОРИЙНЫЙ ФИЛЬТР (Жесткий фейс-контроль):
-        // Если мы ищем не "Все", и категория товара не совпадает с нажатой кнопкой — пропускаем товар!
-        if (activeCategory !== 'Все' && itemCategory !== activeCategory) {
-            return;
-        }
+        if (activeCategory !== 'Все' && itemCategory !== activeCategory) return;
 
-        // 4. СБОР ДАННЫХ ИЗ ТАБЛИЦЫ
         let rawStock = item['Кол - во'] || item['Кол-во'] || item['Количество'] || 0;
         const stock = parseInt(String(rawStock).replace(/\D/g, '')) || 0;
         const id = item['row_number'] || item['rowNumber'] || `row-${Math.random().toString(36).substr(2, 5)}`;
@@ -326,30 +313,32 @@ function showFiltered(items) {
         const cleanTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const cleanDesc = description.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\r?\n|\r/g, " ");
 
-        // 5. ОТРИСОВКА КАРТОЧКИ
+        // Отрисовка
         container.innerHTML += `
-            <div class="product-card" data-id="${id}" data-stock="${stock}">
-                <div class="product-image-container">
-                    ${img ? `<img src="${img}" class="product-image" alt="${cleanTitle}">` : '🌸'}
+        <div class="product-card" data-id="${id}" data-stock="${stock}">
+            <div class="product-image-container">
+                ${img ? `<img src="${img}" class="product-image" alt="${cleanTitle}">` : '<div class="no-img">🌸</div>'}
+            </div>
+            <div class="product-info">
+                <h3 class="product-title">${title}</h3>
+                <p class="product-description">${description}</p>
+                <div class="product-meta">
+                    <p class="product-price">${price} ₴</p>
+                    <p class="product-stock">Залишилося: <b>${stock}</b> шт.</p>
                 </div>
-                <div class="product-info" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <h3 class="product-title">${title}</h3>
-                    <p class="product-description">${description}</p>
-                    <p class="product-price" style="color: #CBA35C; font-weight: bold; margin: 5px 0;">${price} ₴</p>
-                    <p class="product-stock" style="color: #888; font-size: 13px; margin: 8px 0;">Залишилося: <b style="color:#CBA35C">${stock}</b> шт.</p>
-                    <button class="details-btn" onclick="openProductDetails('${id}', '${cleanTitle}', '${img}', '${cleanDesc}', ${price})">ДОКЛАДНІШЕ</button>
-                    <div class="buy-section" style="margin-top: 10px; width: 100%;">
-                        ${stock > 0 ? `
-                            <button class="buy-btn" onclick="showCounter(this)">ДОДАТИ</button>
-                            <div class="counter-container" style="display: none; justify-content: center; align-items: center; gap: 12px;">
-                                <button class="count-btn" onclick="changeCount(this, -1)">-</button>
-                                <span class="count-value">1</span>
-                                <button class="count-btn" onclick="changeCount(this, 1)">+</button>
-                            </div>
-                        ` : `<div style="background: #1a1a1a; color: #555; padding: 12px; border-radius: 8px; font-size: 14px; border: 1px solid #333;">Немає в наявності 🌸</div>`}
-                    </div>
+                <div class="product-actions">
+                    <button class="details-btn" onclick="openProductDetails('${id}', '${cleanTitle}', '${img}', '${cleanDesc}', ${price})">Детальніше</button>
+                    ${stock > 0 ? `
+                        <button class="buy-btn" onclick="showCounter(this)">Додати</button>
+                        <div class="counter-container">
+                            <button class="count-btn" onclick="changeCount(this, -1)">-</button>
+                            <span class="count-value">1</span>
+                            <button class="count-btn" onclick="changeCount(this, 1)">+</button>
+                        </div>
+                    ` : `<div class="out-of-stock">Немає в наявності</div>`}
                 </div>
-            </div>`;
+            </div>
+        </div>`;
     });
 }
 
