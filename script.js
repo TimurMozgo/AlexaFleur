@@ -594,7 +594,7 @@ function showSuccessOrder() {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(249, 228, 237, 0.75);
+        background: rgba(219, 200, 159, 0.4); /* Мягкий кремово-золотой фон overlay */
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         z-index: 999999;
@@ -610,11 +610,11 @@ function showSuccessOrder() {
             background: #FFFFFF;
             padding: 40px 24px;
             border-radius: 30px;
-            border: 2px solid #F28EB3;
+            border: 2px solid #DBC89F; /* Граница в цвет основного акцента */
             text-align: center;
             max-width: 340px;
             width: 100%;
-            box-shadow: 0 20px 50px rgba(217,108,148,0.20);
+            box-shadow: 0 20px 50px rgba(184, 162, 117, 0.15); /* Золотистая тень */
             animation: popupShow 0.4s ease;
         ">
 
@@ -626,7 +626,7 @@ function showSuccessOrder() {
             </div>
 
             <h2 style="
-                color: #9C5369;
+                color: #b8a275; /* Текст в цвет темного акцента */
                 font-size: 25px;
                 margin-bottom: 14px;
                 text-transform: uppercase;
@@ -651,7 +651,7 @@ function showSuccessOrder() {
             <button 
                 onclick="location.reload()"
                 style="
-                    background: linear-gradient(135deg, #F28EB3, #D96C94);
+                    background: linear-gradient(135deg, #DBC89F, #b8a275); /* Благородный золотой градиент */
                     color: #FFFFFF;
                     border: none;
                     padding: 16px;
@@ -661,7 +661,7 @@ function showSuccessOrder() {
                     cursor: pointer;
                     font-size: 16px;
                     transition: 0.3s;
-                    box-shadow: 0 10px 25px rgba(217,108,148,0.25);
+                    box-shadow: 0 10px 25px rgba(184, 162, 117, 0.3);
                 "
             >
                 Зрозуміло

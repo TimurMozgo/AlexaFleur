@@ -356,14 +356,26 @@ header {
 
 /* --- КАРТОЧКА (PREMIUM BOUTIQUE - DARK LUXURY) --- */
 .product-card {
-    background: var(--bg-page-light);
+    background: var(--bg-page-light, #ffffff);
     border-radius: 30px;
     padding: 0;
-    transition: 0.5s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: 100%; /* Чтобы все карточки были вровень */
+    height: 100%;
+    
+    box-shadow:
+        10px 10px 0px rgba(0, 0, 0, 0.25);
+
+    transition: all 0.3s ease;
+}
+
+/* При наведении карточка взлетает, а тень падает еще ниже и становится максимально глубокой */
+.product-card:hover {
+    transform: translate(-3px, -3px);
+
+    box-shadow:
+        13px 13px 0px rgba(0, 0, 0, 0.30);
 }
 
 /* ФОТО */
@@ -450,7 +462,7 @@ header {
     width: 38px; 
     height: 38px; 
     border: none; 
-    background-color: #D96C94; 
+    background-color: var(--accent); 
     color: #FFFFFF; 
     font-weight: bold; 
     font-size: 22px; 
@@ -463,7 +475,7 @@ header {
 }
 
 .count-btn:active {
-    background-color: #9C5369;
+    background-color: var(--accent-dark);
     color: #FFFFFF;
 }
 
@@ -480,7 +492,7 @@ header {
     display: none; 
     position: fixed; 
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(51,51,51,0.75); 
+    background: rgba(0, 0, 0, 0.6); /* Чуть более глубокое премиальное затемнение */
     backdrop-filter: blur(8px); 
     -webkit-backdrop-filter: blur(8px);
     z-index: 2000; 
@@ -493,18 +505,19 @@ header {
 }
 
 .cart-container {
-    background: #FFFFFF;
+    background: var(--bg-page-light, #FFFFFF);
     width: 100%;
     max-width: 500px;
     max-height: 80vh;
     border-radius: 30px 30px 0 0;
-    border-top: 2px solid #D96C94;
+    border-top: 4px solid #000000; /* Жесткий черный контур верха в стиле необрутализма */
     position: relative;
-    color: #333333;
+    color: #000000; /* Чистый черный контрастный текст */
     padding: 25px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 -10px 40px rgba(217,108,148,0.2);
+    /* Твоя фирменная жесткая тень, направленная вверх, так как корзина выезжает снизу */
+    box-shadow: 0 -10px 0px rgba(0, 0, 0, 0.25);
     transform: translateY(100%); 
     transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1); 
     will-change: transform; 
@@ -533,8 +546,8 @@ header {
     margin: 0 auto 20px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #F28EB3;
-    background: #FFFFFF;
+    border: 2px solid #000000; /* Четкий черный контур для фото */
+    background: var(--bg-page-light, #FFFFFF);
 }
 
 .details-img-wrapper img {
@@ -543,18 +556,26 @@ header {
     object-fit: cover;
 }
 
+/* Кнопка закрытия — крестик */
 .close-details {
     position: absolute; 
     top: 15px; 
     right: 15px; 
-    background: #F9E4ED; 
-    color: #D96C94;
-    border: 1px solid #F28EB3; 
+    background: var(--accent, #DBC89F); /* Фирменный цвет шампань */
+    color: #000000; /* Черный крестик */
+    border: 2px solid #000000; /* Жесткий контур */
     width: 35px; 
     height: 35px; 
     border-radius: 50%; 
     cursor: pointer; 
     z-index: 100;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.close-details:hover {
+    background-color: var(--accent-dark, #b8a275);
+    transform: scale(1.05);
 }
 
 .details-footer {
@@ -563,28 +584,50 @@ header {
     align-items: center;
     margin-top: 20px; 
     padding-top: 15px; 
-    border-top: 1px solid #F28EB3;
+    border-top: 2px solid #000000; /* Черная разделительная линия вместо розовой */
 }
 
+/* КНОПКА ОФОРМЛЕНИЯ ЗАКАЗА */
+/* КНОПКА ОФОРМЛЕНИЯ ЗАКАЗА — ПОЛНАЯ ЗАЧИСТКА БАГА */
 .checkout-btn {
-    width: auto; 
-    padding: 12px 30px; 
-    margin: 0;
-    background-color: transparent; 
-    color: #D96C94; 
-    border: 2px solid #D96C94; 
-    border-radius: 8px; 
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    display: block !important;
+    width: 100% !important; /* На мобилках в корзине лучше во всю ширину */
+    padding: 16px 30px !important; 
+    margin: 15px 0 0 0 !important;
+    
+    /* Принудительно красим в шампань и убираем розовый */
+    background-color: var(--accent, #DBC89F) !important; 
+    color: #000000 !important; /* Строгий черный текст */
+    
+    /* Фирменный жесткий контур */
+    border: 2px solid #000000 !important; 
+    border-radius: 12px !important; /* Чуть скруглим, чтобы сочеталось с карточками */
+    
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    
+    /* Твоя правильная жесткая тень (намертво привязанная к кнопке) */
+    box-shadow: 5px 5px 0px #000000 !important; 
+    
+    /* Обнуляем чужие трансформации */
+    transform: none;
+    transition: all 0.2s ease !important;
 }
 
+/* Эффект при наведении (для ПК) */
 .checkout-btn:hover {
-    background-color: #D96C94; 
-    color: #FFFFFF;
+    background-color: var(--accent-dark, #b8a275) !important; 
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 7px 7px 0px #000000 !important; 
+}
+
+/* Эффект при клике (кнопка красиво садится на тень) */
+.checkout-btn:active {
+    transform: translate(3px, 3px) !important;
+    box-shadow: 2px 2px 0px #000000 !important; 
 }
 
 @media (min-width: 768px) {
@@ -630,7 +673,7 @@ header {
     right: 20px;
     width: 65px;
     height: 65px;
-    background: #D96C94; 
+    background: #d96c;  
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -683,14 +726,14 @@ header {
 }
 
 .cart-header {
-    border-bottom: 1px solid #F28EB3;
+    border-bottom: 1px solid var(--accent-dark);
     padding-bottom: 15px;
     margin-bottom: 15px;
 }
 
 .cart-header h2 {
     margin: 0;
-    color: #D96C94;
+    color: var(--accent-dark);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 20px;
@@ -709,7 +752,7 @@ header {
 }
 
 .close-cart-btn:hover { 
-    color: #D96C94; 
+    color: var(--accent-dark); 
 }
 
 /* --- СПИСОК ТОВАРОВ --- */
@@ -748,7 +791,7 @@ header {
     height: 55px;
     border-radius: 12px;
     object-fit: cover;
-    border: 1px solid #F28EB3;
+    border: 1px solid var(--accent);
 }
 
 .cart-item-title {
@@ -769,9 +812,9 @@ header {
 
 /* Кнопки плюс/минус */
 .qty-btn {
-    background: #F9E4ED;
-    border: 1px solid #F28EB3;
-    color: #D96C94;
+    background: #FFF;
+    border: 1px solid var(--accent);
+    color: var(--accent-dark);
     width: 26px; 
     height: 26px;
     border-radius: 6px;
@@ -784,9 +827,9 @@ header {
 }
 
 .qty-btn:hover { 
-    background: #D96C94; 
+    background: var(--accent); 
     color: #FFFFFF; 
-    border-color: #D96C94; 
+    border-color: var(--accent); 
 }
 
 .qty-value { 
@@ -845,50 +888,32 @@ header {
 .cart-total-bar {
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 2px solid #D96C94;
+    border-top: 2px solid var(--accent-dark);
     display: flex;
     justify-content: space-between;
     font-size: 18px;
     background-color: #FFFFFF;
-    color: #D96C94;
-}
-
-/* Кнопка */
-.checkout-btn {
-    margin-top: 20px;
-    width: 100%;
-    padding: 16px;
-    background: #D96C94;
-    border: none;
-    border-radius: 14px;
-    color: #FFFFFF;
-    font-weight: 800;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.checkout-btn:hover { 
-    background: #9C5369; 
-    color: #FFFFFF; 
-    transform: translateY(-2px); 
+    color: var(--accent-dark);
 }
 
 /* --- ОФОРМЛЕНИЕ ЗАКАЗА --- */
 .order-form input {
     width: 100%;
-    background: #F9E4ED;
-    border: 1px solid #F28EB3;
+    /* Делаем очень легкий, приятный кремовый фон на базе акцента */
+    background: rgba(219, 200, 159, 0.12); 
+    border: 1px solid rgba(184, 162, 117, 0.4); /* Мягкая граница */
     color: #333333;
     padding: 14px;
     margin-bottom: 12px;
     border-radius: 12px;
     font-size: 16px;
     box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
 .order-form input:focus { 
-    border-color: #D96C94; 
+    border-color: var(--accent-dark); /* При фокусе линия становится темным золотом */
+    background: rgba(219, 200, 159, 0.2); /* Чуть подсвечиваем фон */
     outline: none; 
 }
 
@@ -898,23 +923,31 @@ header {
     margin-top: 10px; 
 }
 
+/* Кнопка "Назад" — делаем ее спокойной, на мягком фоне */
 .back-btn {
     flex: 1;
-    background: #F9E4ED;
-    color: #9C5369;
+    background: rgba(219, 200, 159, 0.15);
+    color: var(--accent-dark); /* Текст в цвет темного акцента */
     border: none;
     padding: 16px;
     border-radius: 14px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
+.back-btn:hover {
+    background: rgba(219, 200, 159, 0.25); /* Легкий отклик при наведении */
+}
+
+/* Главная кнопка "Оформить" — строгая, контурная, в цвет акцента */
 .final-btn {
     width: auto; 
     padding: 12px 30px; 
     margin: 0;
     background-color: transparent; 
-    color: #D96C94; 
-    border: 2px solid #D96C94; 
+    color: var(--accent-dark); 
+    border: 2px solid var(--accent-dark); 
     border-radius: 8px; 
     font-weight: 700;
     text-transform: uppercase;
@@ -925,8 +958,8 @@ header {
 }
 
 .final-btn:hover {
-    background-color: #D96C94; 
-    color: #FFFFFF;
+    background-color: var(--accent-dark); /* Полностью заливается при наведении */
+    color: #FFFFFF; /* Текст становится белым */
 }
 
 /* ==========================================================================
@@ -1525,7 +1558,7 @@ header {
     right: 20px;  
     width: 65px;  
     height: 65px;
-    background: #D96C94; 
+    background: #d96c; 
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1565,7 +1598,7 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
-    border: 2px solid #F28EB3;
+    border: 2px solid #d96c;
     border-radius: 50%;
     animation: floristPulse 2s infinite;
     box-sizing: border-box;
@@ -1618,7 +1651,7 @@ header {
 
 .contact-link:hover {
     background: rgba(242, 142, 179, 0.15);
-    color: #D96C94;
+    color: var(--accent-dark);
 }
 
 /* Личный чат с АИ АССИСТЕНТОМ */
@@ -1639,19 +1672,19 @@ header {
 
     /* REPAINTED: Main background is now white like the marble */
     background: #FFFFFF;
-    /* REPAINTED: Border is now elegant rose pink */
-    border: 2px solid #E07A9E;
+    /* REPAINTED: Border is now elegant gold accent */
+    border: 2px solid #DBC89F;
     border-radius: 20px;
     z-index: 100000;
     display: none; 
     flex-direction: column;
-    box-shadow: 0 0 50px rgba(0,0,0,0.1); /* Lighter shadow for white theme */
+    box-shadow: 0 15px 40px rgba(184, 162, 117, 0.15); /* Премиальная золотистая тень */
     overflow: hidden;
 }
 
 .ai-chat-header {
-    /* REPAINTED: Header background is elegant rose pink */
-    background: #E07A9E;
+    /* REPAINTED: Header background is elegant dark gold */
+    background: #b8a275;
     /* REPAINTED: Header text is white for contrast */
     color: #FFFFFF;
     padding: 12px;
@@ -1667,8 +1700,8 @@ header {
     display: flex;
     flex-direction: column;
     gap: 10px;
-
-    background: #ffd4d4;
+    /* REPAINTED: Очень мягкий, едва заметный кремовый подтон вместо ядовито-розового */
+    background: rgba(219, 200, 159, 0.05);
 }
 
 .msg-ai, .msg-user {
@@ -1681,17 +1714,17 @@ header {
 
 .msg-ai {
     align-self: flex-start;
-
-    background: #F8F0F3;
-
+    /* REPAINTED: Светлый чистый фон для АИ */
+    background: #FDFBF7;
     color: #444444;
-
-    border-left: 3px solid #E07A9E;
+    /* REPAINTED: Золотая плашка слева */
+    border-left: 3px solid #DBC89F;
 }
 
 .msg-user {
     align-self: flex-end;
-    background: #E07A9E;
+    /* REPAINTED: Сообщение пользователя заливается золотым акцентом */
+    background: #b8a275;
     color: #FFFFFF;
 }
 
@@ -1702,14 +1735,16 @@ header {
     gap: 10px; /* Делаем аккуратный отступ между полем ввода и кнопкой */
     padding: 12px 15px;
     background: #FFFFFF;
-    border-top: 1px solid #F1E5E9;
+    /* REPAINTED: Мягкая граница */
+    border-top: 1px solid rgba(219, 200, 159, 0.2);
 }
 
 /* КРАСИВОЕ ПОЛЕ ВВОДА */
 .ai-input-area input {
     flex-grow: 1;
     background: #FAFAFA; /* Слегка сероватый фон, чтобы выделялся на белом */
-    border: 1px solid #E8D5DC; /* Мягкая розовато-серая рамка */
+    /* REPAINTED: Мягкая золотисто-серая рамка */
+    border: 1px solid rgba(219, 200, 159, 0.3);
     color: #333333;
     padding: 10px 14px;
     border-radius: 25px; /* Закругляем края, как в современных мессенджерах */
@@ -1721,13 +1756,16 @@ header {
 /* Эффект при клике на поле ввода */
 .ai-input-area input:focus {
     background: #FFFFFF;
-    border-color: #E07A9E; /* Рамка становится фирменной розовой */
-    box-shadow: 0 0 8px rgba(224, 122, 158, 0.2); /* Мягкое неоновое свечение */
+    /* REPAINTED: Рамка становится теплой золотой */
+    border-color: #DBC89F;
+    /* REPAINTED: Мягкое золотистое свечение */
+    box-shadow: 0 0 8px rgba(219, 200, 159, 0.3);
 }
 
 /* СТИЛЬНАЯ КРУГЛАЯ КНОПКА ОТПРАВКИ */
 .ai-input-area button {
-    background: #E07A9E; /* Наш фирменный пудрово-розовый цвет */
+    /* REPAINTED: Наш фирменный темный золотой акцент */
+    background: #b8a275;
     color: #FFFFFF; /* Белая стрелочка */
     border: none;
     width: 38px;
@@ -1741,14 +1779,16 @@ header {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 3px 10px rgba(224, 122, 158, 0.3); /* Легкая объемная тень */
+    /* REPAINTED: Объемная золотистая тень */
+    box-shadow: 0 3px 10px rgba(184, 162, 117, 0.3);
 }
 
 /* Эффект при нажатии на кнопку */
 .ai-input-area button:active {
     transform: scale(0.92); /* Кнопка слегка вдавливается при тапе */
-    background: #C96487; /* Становится чуть темнее при клике */
-    box-shadow: 0 1px 5px rgba(224, 122, 158, 0.2);
+    /* REPAINTED: Становится чуть глубже при клике */
+    background: #9c875e;
+    box-shadow: 0 1px 5px rgba(184, 162, 117, 0.2);
 }
 
 @media screen and (max-height: 500px) {
